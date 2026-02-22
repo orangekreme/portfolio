@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <a href="thoughts.html" class="back-nav">Thoughts</a>
+  <span class="page-num">III</span>
+
+  <main class="post-wrapper" id="post-wrapper">
+    <div class="thoughts-loading">Loading...</div>
+  </main>
+
+  <script>
+    const slug = new URLSearchParams(window.location.search).get('slug');
+    const wrapper = document.getElementById('post-wrapper');
+
+    if (!slug) {
+      wrapper.innerHTML = '<p>Post not found.</p>';
+    } else {
+      fetch(`/api/thoughts/content?slug=${encodeURIComponent(slug)}`)
+        .then(r => {
+          if (!r.ok) throw new Error('Not found');
+          return r.json();
+        })
+        .then(data => {
+          // Update page title
+          document.title = `${data.title} — Victoria Deng`;
+
+          // Render blocks to HTML
+          const bodyHtml = data.blocks.map(block => {
+            switch (block.type) {
+              case 'paragraph':
+                return block.text ? `<p>${block.text}</p>` : '';
+              case 'heading_1':
+                return `<h1>${block.text}</h1>`;
+              case 'heading_2':
+                return `<h2>${block.text}</h2>`;
+              case 'heading_3':
+                return `<h3>${block.text}</h3>`;
+              case 'quote':
+                return `<blockquote>${block.text}</blockquote>`;
+              case 'bulleted_list_item':
+                return `<ul><li>${block.text}</li></ul>`;
+              case 'numbered_list_item':
+                return `<ol><li>${block.text}</li></ol>`;
+              case 'divider':
+                return `<hr class="post-divider" />`;
+              default:
+                return '';
+            }
+          }).join('\n');
+
+          wrapper.innerHTML = `
+            <header class="post-header">
+              <div class="post-meta">
+                <span class="post-date">${data.monthYear}</span>
+                <span class="post-tag">${data.tag}</span>
+              </div>
+              <h1 class="post-title">${data.title}</h1>
+            </header>
+            <hr class="post-divider" />
+            <div class="post-body">${bodyHtml}</div>
+          `;
+        })
+        .catch(() => {
+          wrapper.innerHTML = '<p>Could not load post.</p>';
+        });
+    }
+  </script>
+
+</body>
+</html>

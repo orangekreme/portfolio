@@ -1,257 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link href="https://api.fontshare.com/v2/css?f[]=inter@400,500,700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <div class="logo"></div>
-    <div class="header">
-        <div class="letters">
-            <div>V</div>
-            <div>I</div>
-            <div>C</div>
-            <div>T</div>
-        </div>
-        <div class="letters">
-            <div>O</div>
-            <div>R</div>
-            <div>I</div>
-            <div>A</div>
-        </div>
-    </div>
-    <div class="website-content">
-        <div class="img-holder">
-            <img src="./hero.jpg" alt="" />
-        </div>
-        <div class="content-holder">
-            <div class="headerrow">
-                <h1>Welcome!</h1>
-            </div>
-            <div class="row">
-                <div class="img">
-                    <img src="./img-1.jpg" alt="" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="img">
-                    <img src="./img-2.jpg" alt="" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="img">
-                    <img src="./img-3.jpg" alt="" />
-                </div>
-            </div>
-        </div>
-        <div class="content-holder">
-            <div class="textrow">
-                <p>
-                    In todays dynamically shifting landscape, master architects skillfully design
-                    their lives with great mastery. Day by day, they meticulously allocate time
-                    and energy according to passions and values to curate a unique existance.
-                </p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p> These artisans, wielding the power of prioritization, bring to existance stories
-                    of oneself. Every decision, with precision and reverence, crafts a narrative
-                    of virtues, triumphs, and growth.
-                </p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p>
-                    Welcome to mine.
-                </p>
-            </div>
-        </div>
 
-        <div class="content-holder">
-            <div class="headerrow">
-                <h1>Learn About</h1>
-            </div>
-            <div class="tab-holder">
-                <div class="tab-titles">
-                    <p class="tab-links active-link" onclick="opentab('work')">Work</p>
-                    <p class="tab-links" onclick="opentab('education')">Education</p>
-                    <p class="tab-links" onclick="opentab('running')">Running</p>
-                    <p class="tab-links" onclick="opentab('photo')">Photo</p>
-                </div>
-                <div class="tab-contents active-tab" id="work">
-                    <ul>
-                        <li><span>Jul 2023 - Current</span><br>Morgan Stanley</li>
-                        <li><span>Jun 2023 - Jul 2023</span><br>PwC</li>
-                        <li><span>Jun 2021 - Jun 2023</span><br>Northwestern</li>
-                    </ul>
-                </div>
-                <div class="tab-contents" id="education">
-                    <ul>
-                        <li><span>Aug 2016 - Jun 2020</span><br>Charter School of Wilmington</li>
-                        <li><span>Sept 2020 - Jun 2023</span><br>Northwestern University</li>
-                    </ul>
-                </div>
-                <div class="tab-contents" id="running">
-                    <ul>
-                        <li><span>Aug 2016 - Jun 2020</span><br>place holder</li>
-                    </ul>
-                </div>
-                <div class="tab-contents" id="photo">
-                    <ul>
-                        <li><span>Aug 2016 - Jun 2020</span><br>place holder</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="content-holder">
-            <div class="headerrow">
-                <h1>Contact Me</h1>
-            </div>
-            <div class="formrow">
-                <div class="contact-left">
-                    <p><i class="fas fa-paper-plane"></i>vicctoria.dengg@gmail.com</p>
-                    <p><i class="fas fa-phone-square-alt"></i>9137874205</p>
-                    <div class="social-icons">
-                        <a href="https://www.instagram.com/big_toeria/"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/in/victoria-deng-63a179198/"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-                <div class="contact-right">
-                    <form name="submit-to-google-sheet">
-                        <input type="text" name="Name" placeholder="Your Name">
-                        <input type="email" name="Email" placeholder="Your Email">
-                        <textarea name="Message" rows="6" placeholder="Your Message"></textarea>
-                        <button type="submit" class="btn btn2">Submit</button>
-                    </form>
-                    <span id="msg"></span>
-                </div>
-            </div>
-        </div>
-    </div>
+  <span class="page-num">Portfolio</span>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script> //scroll trigger header
-    // window.addEventListener('load', function () {
-        gsap.registerPlugin(ScrollTrigger);
-        document.addEventListener("DOMContentLoaded", function () {
-            const contentHolderHeight = document.querySelector(".content-holder").offsetHeight;
-            const imgHolderHeight = window.innerHeight;
-            const additionalScrollHeight = window.innerHeight;
-            const totalBodyHeight = contentHolderHeight + imgHolderHeight + additionalScrollHeight;
-            document.body.style.height = `${totalBodyHeight}px`;
-        });
+  <main class="home-wrapper">
+    <h1 class="home-name">Victoria<br>Deng</h1>
+    <p class="home-title">Finance, Data &amp; Technology</p>
 
-        ScrollTrigger.create({
-            trigger: ".website-content",
-            start: "-0.1% top",
-            end: "bottom bottom",
-            onEnter: () => {
-                gsap.set(".website-content", { position: 'absolute', top: '195%' });
-            },
-            onLeaveBack: () => {
-                gsap.set(".website-content", { position: 'fixed', top: '0' });
-            },
-            onLeave: () => {
-                gsap.set(".website-content", { position: 'absolute' });
-            }
-        });
-        gsap.to(".header .letters:first-child", {
-            x: () => -innerWidth * 3,
-            scale: 10,
-            ease: "power2.inOut",
-            scrollTrigger: {
-                start: "top top",
-                end: `+=200%`,
-                scrub: 1,
-            }
-        });
-        gsap.to(".header .letters:last-child", {
-            x: () => innerWidth * 3,
-            scale: 10,
-            ease: "power2.inOut",
-            scrollTrigger: {
-                start: "top top",
-                end: `+=200%`,
-                scrub: 1
-            }
-        });
-        gsap.to(".img-holder", {
-            rotation: 0,
-            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-            ease: "power2.inOut",
-            scrollTrigger: {
-                start: "top top",
-                end: `+=200%`,
-                scrub: 1,
-                onEnter: () => {
-                    gsap.set(".header", { zIndex:2});
-                },
-                onEnterBack:()=>{
-                    gsap.set(".header", { zIndex:2});
-                },
-                onLeave: () => {
-                    gsap.set(".header", { zIndex:-1});
-                }
-            }
-        });
-        gsap.to(".img-holder img", {
-            scale: 1,
-            ease: "power2.inOut",
-            scrollTrigger: {
-                start: "top top",
-                end: `+=200%`,
-                scrub: 1
-            }
-        });
-    // });
-    </script>
-    <script>
-        var tablinks = document.getElementsByClassName("tab-links");
-        var tabcontents = document.getElementsByClassName("tab-contents");
-        function opentab(tabname) {
-            for (tablink of tablinks) {
-                tablink.classList.remove("active-link");
-            }
-            for (tabcontent of tabcontents) {
-                tabcontent.classList.remove("active-tab");
-            }
-            event.currentTarget.classList.add("active-link");
-            document.getElementById(tabname).classList.add("active-tab");
-        }
+    <nav class="toc" aria-label="Site navigation">
+      <a href="about.html" class="toc-item">
+        <span class="toc-label">About</span>
+        <span class="toc-dots" aria-hidden="true"></span>
+        <span class="toc-num">I</span>
+      </a>
+      <a href="work.html" class="toc-item">
+        <span class="toc-label">Work</span>
+        <span class="toc-dots" aria-hidden="true"></span>
+        <span class="toc-num">II</span>
+      </a>
+      <a href="thoughts.html" class="toc-item">
+        <span class="toc-label">Thoughts</span>
+        <span class="toc-dots" aria-hidden="true"></span>
+        <span class="toc-num">III</span>
+      </a>
+    </nav>
+  </main>
 
-    </script>
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyRsxM8PC2_Rf4pWUIbyIYBVwYPzJBYiVmh4CUnBCracA2UfSYwjD4cI6LfcXC4shfE/exec'
-        const form = document.forms['submit-to-google-sheet']
-        const msg = document.getElementById("msg")
-        form.addEventListener('submit', e => {
-            e.preventDefault()
-            fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-                .then(response => {
-                    msg.innerHTML = "Message sent successfully"
-                    setTimeout(function(){
-                        msg.innerHTML=""
-                    },5000)
-                    form.reset()
-                })
-                .catch(error => console.error('Error!', error.message))
-        })
-    </script>
+  <footer class="home-footer">victoriadeng.com</footer>
+
 </body>
-
 </html>

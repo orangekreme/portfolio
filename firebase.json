@@ -5,6 +5,15 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      { "source": "/api/thoughts", "function": "thoughts" },
+      { "source": "/api/thoughts/content", "function": "thoughtContent" },
+      { "source": "/api/countries", "function": "countries" }
     ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
   }
 }

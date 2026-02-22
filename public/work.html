@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <a href="index.html" class="back-nav">Home</a>
+  <span class="page-num">II</span>
+
+  <main class="page-wrapper" style="max-width: 760px;">
+    <header class="page-header">
+      <span class="page-section-num">II — Work</span>
+      <h1 class="page-title">Work</h1>
+    </header>
+
+    <div class="project-list">
+
+      <!-- Project 1 -->
+      <div class="project-card">
+        <div class="project-image">
+          <div class="project-placeholder">
+            <span class="project-placeholder-label">Project Image</span>
+          </div>
+        </div>
+        <div class="project-meta">
+          <span class="project-name">Project One</span>
+          <div class="project-right">
+            <span class="project-tag">Data Visualization</span>
+            <span class="project-link">github.com ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card">
+        <div class="project-image">
+          <div class="project-placeholder">
+            <span class="project-placeholder-label">Project Image</span>
+          </div>
+        </div>
+        <div class="project-meta">
+          <span class="project-name">Project Two</span>
+          <div class="project-right">
+            <span class="project-tag">CS / Engineering</span>
+            <span class="project-link">github.com ↗</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3 — Travel Map -->
+      <a href="travel.html" class="project-card">
+        <div class="project-image" style="background:#0f0d08;">
+          <div class="project-placeholder" style="background: #0f0d08;">
+            <!-- Mini world map preview -->
+            <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:90%;opacity:0.85;" id="mini-map-preview">
+            </svg>
+          </div>
+        </div>
+        <div class="project-meta">
+          <span class="project-name">Travel Map</span>
+          <div class="project-right">
+            <span class="project-tag">Data Visualization</span>
+            <span class="project-link">View map ↗</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <script>
+    // Render mini world map preview using Notion-sourced country data
+    const W = 800, H = 400;
+    function project(lon, lat) { return [(lon + 180) / 360 * W, (90 - lat) / 180 * H]; }
+    function ringToD(coords) {
+      return coords.map((pt, i) => {
+        const [x, y] = project(pt[0], pt[1]);
+        return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ') + ' Z';
+    }
+    function geomToD(g) {
+      if (g.type === 'Polygon') return g.coordinates.map(ringToD).join(' ');
+      if (g.type === 'MultiPolygon') return g.coordinates.map(p => p.map(ringToD).join(' ')).join(' ');
+      return '';
+    }
+
+    async function renderMiniMap() {
+      const svg = document.getElementById('mini-map-preview');
+
+      // Fetch visited countries from Notion API
+      let visitedCodes = [], visitedNames = [];
+      try {
+        const r = await fetch('/api/countries');
+        const data = await r.json();
+        visitedCodes = data.visitedCodes || [];
+        visitedNames = data.visitedNames || [];
+      } catch (e) {
+        // Fallback: render map without highlights if API unavailable
+      }
+
+      const geoRes = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+      const geoData = await geoRes.json();
+
+      geoData.features.forEach(f => {
+        const code = f.properties['ISO3166-1-Alpha-2'];
+        const name = f.properties.name;
+        const isVisited = visitedCodes.includes(code) || visitedNames.includes(name);
+        const d = geomToD(f.geometry);
+        if (!d) return;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', isVisited ? '#c9a96e' : '#1e1a14');
+        path.setAttribute('stroke', '#0a0a0a');
+        path.setAttribute('stroke-width', '0.4');
+        svg.appendChild(path);
+      });
+    }
+
+    renderMiniMap();
+  </script>
+</body>
+</html>
