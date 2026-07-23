@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thoughts — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <a href="index.html" class="back-nav">Home</a>
+  <span class="page-num">III</span>
+
+  <main class="page-wrapper">
+    <header class="page-header">
+      <span class="page-section-num">III — Thoughts</span>
+      <h1 class="page-title">Thoughts</h1>
+    </header>
+
+    <div class="thoughts-list" id="thoughts-list">
+      <!-- Posts loaded from Notion via /api/thoughts -->
+      <div class="thoughts-loading">Loading...</div>
+    </div>
+  </main>
+
+  <script>
+    const list = document.getElementById('thoughts-list');
+
+    fetch('/api/thoughts')
+      .then(r => r.json())
+      .then(data => {
+        if (!data.posts || !data.posts.length) {
+          list.innerHTML = '<p class="thoughts-empty">No posts yet.</p>';
+          return;
+        }
+
+        list.innerHTML = data.posts.map(post => `
+          <a href="post.html?slug=${encodeURIComponent(post.slug)}" class="thought-item">
+            <div class="thought-item-inner">
+              <div>
+                <div class="thought-meta">
+                  <span class="thought-date">${post.monthYear}</span>
+                  <span class="thought-tag">${post.tag}</span>
+                </div>
+                <h2 class="thought-title">${post.title}</h2>
+                <p class="thought-excerpt">${post.excerpt}</p>
+              </div>
+              <span class="thought-arrow">→</span>
+            </div>
+          </a>
+        `).join('');
+      })
+      .catch(() => {
+        list.innerHTML = '<p class="thoughts-empty">Could not load posts.</p>';
+      });
+  </script>
+
+</body>
+</html>

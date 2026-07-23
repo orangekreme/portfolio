@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <a href="work.html" class="back-nav">Work</a>
+  <span class="page-num">II — III</span>
+
+  <div class="map-tooltip" id="tooltip"></div>
+
+  <main class="page-wrapper" style="max-width: 900px;">
+    <header class="page-header">
+      <span class="page-section-num">III — Travel</span>
+      <h1 class="page-title">Travel</h1>
+    </header>
+
+    <p class="travel-intro">Countries I've visited, highlighted in gold. Click a country to learn more.</p>
+
+    <!-- World map via a simple SVG embed using Natural Earth data paths (simplified) -->
+    <div class="map-container" id="map-container">
+      <!-- We use an inline SVG world map. Country paths are identified by ISO 3166-1 alpha-2 codes. -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 2000 1001"
+        id="world-map"
+        aria-label="World map showing visited countries"
+      >
+        <!-- This SVG uses the Natural Earth projection. Each path has a data-code and data-name attribute. -->
+        <!-- We load the actual paths from a JSON source via JS below. -->
+      </svg>
+    </div>
+
+    <p class="country-count" id="country-count">Loading map…</p>
+
+    <div class="country-list" id="country-list"></div>
+  </main>
+
+  <!-- Popup / modal for country detail -->
+  <div id="country-modal" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.85);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="
+      background: #0f0d08;
+      border: 1px solid rgba(201,169,110,0.25);
+      max-width: 420px;
+      width: 90%;
+      padding: 2.5rem;
+      position: relative;
+    ">
+      <button id="modal-close" style="
+        position: absolute;
+        top: 1rem; right: 1rem;
+        background: none; border: none;
+        color: #c9a96e; font-size: 1.2rem;
+        cursor: pointer; opacity: 0.6;
+        transition: opacity 0.2s;
+        font-family: inherit;
+      " aria-label="Close">✕</button>
+      <span id="modal-flag" style="font-size: 2.5rem; display: block; margin-bottom: 0.75rem;"></span>
+      <h2 id="modal-name" style="
+        font-size: 1.5rem;
+        font-weight: 200;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #e8dcc8;
+        margin-bottom: 0.5rem;
+      "></h2>
+      <p id="modal-note" style="
+        font-size: 0.8rem;
+        color: #6b5f4f;
+        line-height: 1.7;
+        letter-spacing: 0.03em;
+        margin-top: 1rem;
+      "></p>
+    </div>
+  </div>
+
+  <script>
+    const tooltip = document.getElementById('tooltip');
+    const modal = document.getElementById('country-modal');
+    const modalName = document.getElementById('modal-name');
+    const modalFlag = document.getElementById('modal-flag');
+    const modalNote = document.getElementById('modal-note');
+    const modalClose = document.getElementById('modal-close');
+    const countryCount = document.getElementById('country-count');
+    const countryList = document.getElementById('country-list');
+
+    modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    function projectPoint(lon, lat, width, height) {
+      return [(lon + 180) / 360 * width, (90 - lat) / 180 * height];
+    }
+
+    function coordsToPath(geometry, width, height) {
+      function ringToD(coords) {
+        return coords.map((pt, i) => {
+          const [x, y] = projectPoint(pt[0], pt[1], width, height);
+          return (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
+        }).join(' ') + ' Z';
+      }
+      if (geometry.type === 'Polygon') return geometry.coordinates.map(ringToD).join(' ');
+      if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(p => p.map(ringToD).join(' ')).join(' ');
+      return '';
+    }
+
+    async function loadMap() {
+      const svg = document.getElementById('world-map');
+      const W = 2000, H = 1001;
+
+      // Fetch visited countries from Notion via API
+      let visited = {};
+      try {
+        const r = await fetch('/api/countries');
+        const data = await r.json();
+        visited = data.visited || {};
+      } catch (e) {
+        countryCount.textContent = 'Could not load country data.';
+        return;
+      }
+
+      // Fetch world map GeoJSON
+      let geoData;
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+        geoData = await res.json();
+      } catch (e) {
+        countryCount.textContent = 'Map failed to load. Please check your connection.';
+        return;
+      }
+
+      // Name→key fallback for ISO codes that return -99 (e.g. France in this dataset)
+      const visitedByName = {};
+      Object.entries(visited).forEach(([k, v]) => {
+        visitedByName[v.name.toLowerCase()] = k;
+      });
+
+      geoData.features.forEach(feature => {
+        let code = feature.properties['ISO3166-1-Alpha-2'];
+        const name = feature.properties.name;
+        if (!visited[code] && name) {
+          const fallback = visitedByName[name.toLowerCase()];
+          if (fallback) code = fallback;
+        }
+        const d = coordsToPath(feature.geometry, W, H);
+        if (!d) return;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('class', 'country' + (visited[code] ? ' visited' : ''));
+        path.setAttribute('data-code', code);
+        path.setAttribute('data-name', name);
+
+        if (visited[code]) {
+          path.addEventListener('mousemove', (e) => {
+            tooltip.textContent = visited[code].name;
+            tooltip.classList.add('visible');
+            tooltip.style.left = (e.clientX + 14) + 'px';
+            tooltip.style.top = (e.clientY - 8) + 'px';
+          });
+          path.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+          path.addEventListener('click', () => {
+            const info = visited[code];
+            modalName.textContent = info.name;
+            modalFlag.textContent = info.flag;
+            modalNote.textContent = info.note;
+            modal.style.display = 'flex';
+          });
+        }
+        svg.appendChild(path);
+      });
+
+      // Country chips
+      const visitedList = Object.entries(visited).sort((a, b) => a[1].name.localeCompare(b[1].name));
+      countryCount.textContent = visitedList.length + ' countries visited';
+
+      visitedList.forEach(([code, info]) => {
+        const chip = document.createElement('button');
+        chip.className = 'country-chip';
+        chip.textContent = info.flag + ' ' + info.name;
+        chip.addEventListener('click', () => {
+          modalName.textContent = info.name;
+          modalFlag.textContent = info.flag;
+          modalNote.textContent = info.note;
+          modal.style.display = 'flex';
+        });
+        countryList.appendChild(chip);
+      });
+    }
+
+    loadMap();
+  </script>
+
+</body>
+</html>
