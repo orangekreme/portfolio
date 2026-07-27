@@ -9,7 +9,22 @@
     "rewrites": [
       { "source": "/api/thoughts", "function": "thoughts" },
       { "source": "/api/thoughts/content", "function": "thoughtContent" },
-      { "source": "/api/countries", "function": "countries" }
+      { "source": "/api/countries", "function": "countries" },
+      { "source": "/api/races", "function": "races" },
+      { "source": "/api/films", "function": "films" },
+      { "source": "/api/currently", "function": "currently" },
+      { "source": "/api/polaroid-board", "function": "polaroidBoard" },
+      { "source": "/api/postcards", "function": "postcards" },
+      { "source": "/api/postcard-backs", "function": "postcardBacks" },
+      { "source": "/api/polaroids", "function": "polaroids" }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|js|css)",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }
+        ]
+      }
     ]
   },
   "functions": {

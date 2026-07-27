@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polaroids — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
+</head>
+<body>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+  <a href="index.html" class="back-nav">Back</a>
+  <span class="page-num">Polaroids</span>
+
+  <main class="page-wrapper" style="max-width: 900px;">
+    <header class="page-header">
+      <h1 class="page-title">Polaroids</h1>
+    </header>
+
+    <p class="travel-intro">A board of photos. Drag them around; scroll the pile below for the rest.</p>
+
+    <!-- Toolbar -->
+    <div class="pl-toolbar" id="pl-toolbar">
+      <button class="pl-btn" id="pl-organize">▚ Organize</button>
+      <div class="pl-toolbar-right">
+        <span class="pl-dirty" id="pl-dirty" hidden>unsaved changes</span>
+        <button class="pl-btn" id="pl-save" hidden>▶ Save layout</button>
+        <button class="pl-btn pl-btn--ghost" id="pl-curate">Curate</button>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div class="pl-board" id="pl-board">
+      <span class="pl-board-label">the board</span>
+    </div>
+
+    <!-- Stack of unplaced photos -->
+    <div class="pl-stack-wrap" id="pl-stack-wrap">
+      <div class="pl-stack" id="pl-stack"></div>
+      <div class="pl-stack-meta">
+        <span class="pl-stack-hint" id="pl-stack-hint">click the pile to flip through</span>
+        <span class="pl-counter" id="pl-counter"></span>
+      </div>
+    </div>
+
+    <!-- Mobile grid (replaces board+stack on small screens) -->
+    <div class="pl-grid" id="pl-grid" hidden></div>
+
+    <p class="pl-status" id="pl-status">Loading photos…</p>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="pl-lightbox" id="pl-lightbox">
+    <button class="pl-lightbox-close" id="pl-lightbox-close" aria-label="Close">✕</button>
+    <div class="pl-lightbox-inner" id="pl-lightbox-inner"></div>
+  </div>
+
+  <script>
+    function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':s; return d.innerHTML; }
+    function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+    const boardEl   = document.getElementById('pl-board');
+    const stackEl   = document.getElementById('pl-stack');
+    const stackWrap = document.getElementById('pl-stack-wrap');
+    const gridEl    = document.getElementById('pl-grid');
+    const statusEl  = document.getElementById('pl-status');
+    const counterEl = document.getElementById('pl-counter');
+    const stackHint = document.getElementById('pl-stack-hint');
+    const dirtyEl   = document.getElementById('pl-dirty');
+    const saveBtn   = document.getElementById('pl-save');
+    const curateBtn = document.getElementById('pl-curate');
+    const organizeBtn = document.getElementById('pl-organize');
+
+    let PL = [];              // [{id,image,name,date,displayDate,location}]
+    let BY = {};             // id -> polaroid
+    let B  = {};             // id -> {onBoard,x,y,angle,z}
+    let STACK = [];          // ids in pile order (top first)
+    let editMode = false;
+    let editPass = null;
+    let dirty = false;
+
+    const isMobile = () => window.innerWidth > 0 && window.innerWidth <= 640;
+
+    // ── Data ──────────────────────────────────────────────────────────────────
+    async function loadJSON(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('bad status ' + r.status);
+      return r.json();
+    }
+    async function loadPolaroids() {
+      try {
+        const d = await loadJSON('/api/polaroids');
+        if (d.polaroids && d.polaroids.length) return { polaroids: d.polaroids, board: null };
+        throw new Error('empty');
+      } catch (e) {
+        if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+          try { const d = await loadJSON('./sample/polaroids.json'); return { polaroids: d.polaroids || [], board: d.board || null }; }
+          catch (_) {}
+        }
+        return { polaroids: [], board: null };
+      }
+    }
+    async function loadBoard() {
+      // Saved arrangement (Firestore-backed in production). Falls back to null.
+      try {
+        const d = await loadJSON('/api/polaroid-board');
+        if (d && d.items) return d;
+      } catch (e) { /* fall through to sample/default */ }
+      return null;
+    }
+
+    // Merge polaroids with a board arrangement; anything unplaced goes to the pile.
+    function applyArrangement(board) {
+      B = {}; STACK = [];
+      const items = (board && board.items) || {};
+      const savedStack = (board && board.stackOrder) || [];
+      PL.forEach((p, i) => {
+        const s = items[p.id];
+        if (s && s.onBoard) {
+          B[p.id] = { onBoard: true, x: +s.x || 0, y: +s.y || 0, angle: +s.angle || 0, z: +s.z || (i + 1) };
+        } else {
+          B[p.id] = { onBoard: false, x: 0, y: 0, angle: 0, z: 0 };
+        }
+      });
+      // Build stack: saved order first, then any leftover unplaced photos
+      savedStack.forEach(id => { if (B[id] && !B[id].onBoard && !STACK.includes(id)) STACK.push(id); });
+      PL.forEach(p => { if (!B[p.id].onBoard && !STACK.includes(p.id)) STACK.push(p.id); });
+    }
+
+    // ── Polaroid element ──────────────────────────────────────────────────────
+    function polaroidHTML(p) {
+      const cap = [p.location, p.displayDate].filter(Boolean).join('  ·  ');
+      return '<div class="pl-photo"><img src="' + esc(p.image) + '" alt="' + esc(p.name || 'Polaroid') + '" loading="lazy" draggable="false" /></div>' +
+             '<div class="pl-cap">' + esc(cap) + '</div>';
+    }
+    function makePolaroid(p, cls) {
+      const el = document.createElement('div');
+      el.className = 'pl-polaroid ' + (cls || '');
+      el.dataset.id = p.id;
+      el.innerHTML = polaroidHTML(p);
+      return el;
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    function render() {
+      statusEl.hidden = true;
+      if (isMobile()) { renderGrid(); return; }
+      gridEl.hidden = true;
+      boardEl.style.display = '';
+      stackWrap.style.display = '';
+      renderBoard();
+      renderStack();
+    }
+
+    function renderBoard() {
+      // Clear (keep the label element)
+      [...boardEl.querySelectorAll('.pl-polaroid')].forEach(n => n.remove());
+      PL.filter(p => B[p.id] && B[p.id].onBoard).forEach(p => {
+        const s = B[p.id];
+        const el = makePolaroid(p, 'pl-on-board');
+        el.style.left = s.x + '%';
+        el.style.top = s.y + '%';
+        el.style.zIndex = s.z;
+        el.style.setProperty('--angle', s.angle + 'deg');
+        attachDrag(el, p.id, 'board');
+        boardEl.appendChild(el);
+      });
+      boardEl.classList.toggle('is-editing', editMode);
+    }
+
+    function renderStack() {
+      stackEl.innerHTML = '';
+      const ids = STACK.slice(0, 4); // top + a few peeking behind
+      ids.forEach((id, i) => {
+        const p = BY[id];
+        if (!p) return;
+        const el = makePolaroid(p, 'pl-in-stack');
+        el.style.setProperty('--i', i);
+        el.style.zIndex = 10 - i;
+        if (i === 0) attachDrag(el, id, 'stack');
+        stackEl.appendChild(el);
+      });
+      const total = STACK.length;
+      counterEl.textContent = total ? (total + ' in the pile') : '';
+      stackWrap.style.visibility = total ? 'visible' : 'hidden';
+      stackHint.textContent = total > 1 ? 'click the pile to flip through' : (total === 1 ? 'drag onto the board' : '');
+    }
+
+    function renderGrid() {
+      boardEl.style.display = 'none';
+      stackWrap.style.display = 'none';
+      gridEl.hidden = false;
+      gridEl.innerHTML = '';
+      PL.forEach(p => {
+        const el = makePolaroid(p, 'pl-grid-item');
+        el.style.setProperty('--angle', ((p.id.charCodeAt(p.id.length - 1) % 7) - 3) + 'deg');
+        el.addEventListener('click', () => openLightbox(p));
+        gridEl.appendChild(el);
+      });
+    }
+
+    // ── Stack cycling (top photo animates to the back) ──────────────────────────
+    let cycling = false;
+    function cycleStack() {
+      if (cycling || STACK.length < 2) return;
+      cycling = true;
+      const top = stackEl.querySelector('.pl-in-stack');
+      if (!top) { cycling = false; return; }
+      top.classList.add('pl-cycle-out');
+      setTimeout(() => {
+        STACK.push(STACK.shift());   // move top to the back
+        cycling = false;
+        renderStack();
+      }, 300);
+    }
+    stackEl.addEventListener('click', (e) => {
+      // Only a plain click (not the end of a drag) cycles.
+      if (e.target.closest('.pl-polaroid') && !justDragged) cycleStack();
+    });
+
+    // ── Drag (unified for board + stack items) ──────────────────────────────────
+    let justDragged = false;
+    function attachDrag(el, id, from) {
+      el.addEventListener('pointerdown', (e) => {
+        if (e.button != null && e.button !== 0) return;
+        if (isMobile()) return;
+        const rect = el.getBoundingClientRect();
+        const grabX = e.clientX - rect.left;
+        const grabY = e.clientY - rect.top;
+        const startX = e.clientX, startY = e.clientY;
+        let moved = false;
+        try { el.setPointerCapture(e.pointerId); } catch (_) {}
+        el.classList.add('pl-lifting');
+
+        function onMove(ev) {
+          const dx = ev.clientX - startX, dy = ev.clientY - startY;
+          if (!moved && Math.abs(dx) + Math.abs(dy) > 4) {
+            moved = true;
+            // Lift: switch to fixed positioning that follows the pointer
+            el.classList.add('is-dragging');
+            el.style.width = rect.width + 'px';
+          }
+          if (moved) {
+            el.style.left = (ev.clientX - grabX) + 'px';
+            el.style.top = (ev.clientY - grabY) + 'px';
+          }
+        }
+        function onUp(ev) {
+          try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
+          el.classList.remove('pl-lifting');
+          if (!moved) { // treated as a click
+            el.classList.remove('is-dragging');
+            if (from === 'board') openLightbox(BY[id]);
+            return;
+          }
+          justDragged = true; setTimeout(() => { justDragged = false; }, 50);
+
+          const b = boardEl.getBoundingClientRect();
+          const inside = ev.clientX >= b.left && ev.clientX <= b.right && ev.clientY >= b.top && ev.clientY <= b.bottom;
+          const elRect = el.getBoundingClientRect();
+
+          if (inside) {
+            // Place / keep on board at drop position (percentages of board)
+            const x = clamp((elRect.left - b.left) / b.width * 100, 0, 92);
+            const y = clamp((elRect.top - b.top) / b.height * 100, 0, 82);
+            const wasStack = !B[id].onBoard;
+            B[id].onBoard = true;
+            B[id].x = x; B[id].y = y;
+            B[id].z = topZ() + 1;
+            if (wasStack) { STACK = STACK.filter(s => s !== id); B[id].angle = B[id].angle || rand(-6, 6); }
+          } else {
+            // Dropped off the board → send to the bottom of the pile
+            B[id].onBoard = false;
+            STACK = STACK.filter(s => s !== id);
+            STACK.push(id);
+          }
+          // Reset inline positioning; render places it correctly
+          el.classList.remove('is-dragging');
+          el.style.width = '';
+          markDirty();
+          render();
+        }
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+    }
+    function topZ() { return Math.max(0, ...Object.values(B).map(s => s.z || 0)); }
+    function rand(a, b) { return Math.round(a + Math.random() * (b - a)); }
+
+    // ── Organize (straighten on-board photos into a grid) ───────────────────────
+    organizeBtn.addEventListener('click', () => {
+      const ids = PL.filter(p => B[p.id] && B[p.id].onBoard).map(p => p.id);
+      if (!ids.length) return;
+      const cols = Math.ceil(Math.sqrt(ids.length));
+      const rows = Math.ceil(ids.length / cols);
+      const padX = 6, padY = 8;
+      const cellW = (92 - padX) / cols, cellH = (82 - padY) / rows;
+      ids.forEach((id, i) => {
+        const c = i % cols, r = Math.floor(i / cols);
+        B[id].x = padX / 2 + c * cellW + (cellW - 20) / 2;
+        B[id].y = padY / 2 + r * cellH;
+        B[id].angle = 0;
+        B[id].z = i + 1;
+      });
+      markDirty();
+      render();
+    });
+
+    // ── Lightbox ────────────────────────────────────────────────────────────────
+    const lightbox = document.getElementById('pl-lightbox');
+    const lightboxInner = document.getElementById('pl-lightbox-inner');
+    function openLightbox(p) {
+      if (!p) return;
+      lightboxInner.innerHTML = '<div class="pl-polaroid pl-lightbox-card">' + polaroidHTML(p) + '</div>';
+      lightbox.classList.add('is-open');
+      document.body.classList.add('pf-no-scroll');
+    }
+    function closeLightbox() { lightbox.classList.remove('is-open'); document.body.classList.remove('pf-no-scroll'); }
+    document.getElementById('pl-lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // ── Edit mode + save ────────────────────────────────────────────────────────
+    function markDirty() { if (editMode) { dirty = true; dirtyEl.hidden = false; } }
+    function setEditMode(on) {
+      editMode = on;
+      saveBtn.hidden = !on;
+      curateBtn.textContent = on ? 'Done' : 'Curate';
+      curateBtn.classList.toggle('pl-btn--ghost', !on);
+      document.body.classList.toggle('pl-edit', on);
+      render();
+    }
+    curateBtn.addEventListener('click', async () => {
+      if (editMode) { setEditMode(false); return; }
+      const pass = window.prompt('Curator passcode:');
+      if (!pass) return;
+      try {
+        const r = await fetch('/api/polaroid-board', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pass })
+        });
+        if (!r.ok) throw new Error('bad');
+        editPass = pass;
+        setEditMode(true);
+      } catch (e) {
+        if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { editPass = pass; setEditMode(true); } // dev bypass
+        else alert('Wrong passcode.');
+      }
+    });
+    saveBtn.addEventListener('click', async () => {
+      const items = {};
+      Object.keys(B).forEach(id => {
+        const s = B[id];
+        items[id] = { onBoard: !!s.onBoard, x: +s.x.toFixed(2), y: +s.y.toFixed(2), angle: +s.angle || 0, z: s.z || 0 };
+      });
+      const payload = { password: editPass, board: { items, stackOrder: STACK.slice() } };
+      saveBtn.textContent = 'Saving…';
+      try {
+        const r = await fetch('/api/polaroid-board', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        if (!r.ok) throw new Error('bad');
+        dirty = false; dirtyEl.hidden = true;
+      } catch (e) {
+        if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) alert('Could not save.');
+        else { dirty = false; dirtyEl.hidden = true; } // dev: pretend-save
+      }
+      saveBtn.textContent = '▶ Save layout';
+    });
+
+    window.addEventListener('resize', () => { render(); });
+
+    // ── Boot ──────────────────────────────────────────────────────────────────
+    (async function init() {
+      const [{ polaroids, board: sampleBoard }, savedBoard] = await Promise.all([loadPolaroids(), loadBoard()]);
+      PL = polaroids;
+      BY = {}; PL.forEach(p => { BY[p.id] = p; });
+      if (!PL.length) { statusEl.textContent = 'No photos yet.'; return; }
+      applyArrangement(savedBoard || sampleBoard);
+      render();
+    })();
+  </script>
+  <script src="theme.js"></script>
+  <script src="view.js"></script>
+
+</body>
+</html>

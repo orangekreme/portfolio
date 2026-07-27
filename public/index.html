@@ -1,40 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light" data-vault="locked">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Victoria Deng</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
 </head>
 <body>
 
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shared circle -->
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <!-- Sun rays -->
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <!-- Two-arc crescent moon -->
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+
   <span class="page-num">Portfolio</span>
 
-  <main class="home-wrapper">
-    <h1 class="home-name">Victoria<br>Deng</h1>
-    <p class="home-title">Finance, Data &amp; Technology</p>
+  <main class="browse">
 
-    <nav class="toc" aria-label="Site navigation">
-      <a href="about.html" class="toc-item">
-        <span class="toc-label">About</span>
-        <span class="toc-dots" aria-hidden="true"></span>
-        <span class="toc-num">I</span>
-      </a>
-      <a href="work.html" class="toc-item">
-        <span class="toc-label">Work</span>
-        <span class="toc-dots" aria-hidden="true"></span>
-        <span class="toc-num">II</span>
-      </a>
-      <a href="thoughts.html" class="toc-item">
-        <span class="toc-label">Thoughts</span>
-        <span class="toc-dots" aria-hidden="true"></span>
-        <span class="toc-num">III</span>
-      </a>
-    </nav>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-kicker" data-views="recruiter">▸ Work</p>
+        <p class="hero-kicker" data-views="friend">▸ Life</p>
+        <p class="hero-kicker" data-views="self">▸ The vault</p>
+        <h1 class="hero-title">Victoria Deng</h1>
+        <p class="hero-tag" data-views="recruiter">BI, Strategy and Product Manager in NYC.</p>
+        <p class="hero-tag" data-views="friend">Next level up? Some personal interests.</p>
+        <p class="hero-tag" data-views="self">Now you're really entering the vault.</p>
+        <div class="hero-cta">
+          <a class="arcade-btn" href="#" id="email-btn" data-views="recruiter">▶ Email me</a>
+          <a class="arcade-btn" href="currently.html" data-views="friend">▶ What I'm up to</a>
+          <a class="arcade-btn" id="vault-btn" href="#personal" data-views="self">▶ Insert Key</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Work (Level 0 only) -->
+    <section class="row" data-views="recruiter">
+      <h2 class="row-title">Work</h2>
+      <div class="row-track">
+        <a class="card" href="about.html">
+          <span class="card-cover"><span class="card-glyph">📄</span></span>
+          <span class="card-label">Résumé</span>
+          <span class="card-sub">Experience · Skills</span>
+        </a>
+        <a class="card" href="projects.html">
+          <span class="card-cover"><span class="card-glyph">🕹️</span></span>
+          <span class="card-label">Projects</span>
+          <span class="card-sub">Personal interests</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Personal (Level 1 only) -->
+    <section class="row" data-views="friend">
+      <h2 class="row-title">Personal</h2>
+      <div class="row-track">
+        <a class="card" href="films.html">
+          <span class="card-cover"><span class="card-glyph">🎬</span></span>
+          <span class="card-label">Films</span>
+          <span class="card-sub">Letterboxd</span>
+        </a>
+        <a class="card" href="races.html">
+          <span class="card-cover"><span class="card-glyph">🏃</span></span>
+          <span class="card-label">Races</span>
+          <span class="card-sub">Running</span>
+        </a>
+        <a class="card" href="travel.html">
+          <span class="card-cover"><span class="card-glyph">🌍</span></span>
+          <span class="card-label">Travel</span>
+          <span class="card-sub">World map</span>
+        </a>
+        <a class="card" href="thoughts.html">
+          <span class="card-cover"><span class="card-glyph">✍️</span></span>
+          <span class="card-label">Thoughts</span>
+          <span class="card-sub">Substack</span>
+        </a>
+        <a class="card" href="postcards.html">
+          <span class="card-cover"><span class="card-glyph">✉️</span></span>
+          <span class="card-label">Postcards</span>
+          <span class="card-sub">Received · sent</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Vault (Level 2 only — hidden until the vault is unlocked) -->
+    <section class="row vault-locked" id="personal" data-views="self">
+      <h2 class="row-title">Vault</h2>
+      <div class="row-track">
+        <a class="card" href="polaroids.html">
+          <span class="card-cover"><span class="card-polaroid"><span class="card-polaroid-photo"></span></span></span>
+          <span class="card-label">Polaroids</span>
+          <span class="card-sub">Photo board</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="browse-footer">victoriadeng.com</footer>
+
   </main>
 
-  <footer class="home-footer">victoriadeng.com</footer>
+  <!-- Email popup -->
+  <div class="email-modal" id="email-modal" role="dialog" aria-modal="true" aria-label="Email Victoria">
+    <div class="email-box">
+      <button class="email-close" id="email-close" aria-label="Close">✕</button>
+      <p class="email-kicker">▸ Get in touch</p>
+      <h2 class="email-title">Email me</h2>
+      <div class="email-to">
+        <span id="email-addr">victoriadeng.jobs@gmail.com</span>
+        <button type="button" class="email-copy" id="email-copy">copy</button>
+      </div>
+      <form class="email-form" id="email-form">
+        <label class="email-field">
+          <span>Subject</span>
+          <input type="text" id="email-subject" autocomplete="off" placeholder="Hello Victoria" />
+        </label>
+        <label class="email-field">
+          <span>Message</span>
+          <textarea id="email-body" rows="5" placeholder="Write your note…"></textarea>
+        </label>
+        <button type="submit" class="arcade-btn email-send">▶ Open in mail app</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* Email popup — composes a message and hands off to the visitor's mail app
+       via a mailto: link (no backend). Also offers copy-to-clipboard. */
+    (function () {
+      var EMAIL = 'victoriadeng.jobs@gmail.com';
+      var modal = document.getElementById('email-modal');
+      var btn = document.getElementById('email-btn');
+      if (!modal || !btn) return;
+      var closeBtn = document.getElementById('email-close');
+      var form = document.getElementById('email-form');
+      var copyBtn = document.getElementById('email-copy');
+
+      function open(e) {
+        if (e) e.preventDefault();
+        modal.classList.add('is-open');
+        document.body.classList.add('pf-no-scroll');
+        setTimeout(function () { var s = document.getElementById('email-subject'); if (s) s.focus(); }, 30);
+      }
+      function close() {
+        modal.classList.remove('is-open');
+        document.body.classList.remove('pf-no-scroll');
+      }
+      btn.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+      copyBtn.addEventListener('click', function () {
+        function done() { copyBtn.textContent = 'copied ✓'; setTimeout(function () { copyBtn.textContent = 'copy'; }, 1500); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(EMAIL).then(done, done);
+        } else {
+          var t = document.createElement('textarea'); t.value = EMAIL;
+          document.body.appendChild(t); t.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          t.remove(); done();
+        }
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var subj = document.getElementById('email-subject').value || '';
+        var body = document.getElementById('email-body').value || '';
+        window.location.href = 'mailto:' + EMAIL +
+          '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+        close();
+      });
+    })();
+  </script>
+
+  <script src="theme.js"></script>
+  <script src="view.js"></script>
+
+  <script>
+    /* Infinite-loop horizontal scroll for card rows that overflow the screen.
+       Rows that fit stay centered (no clones, no loop). */
+    (function () {
+      function gapOf(track) {
+        var cs = getComputedStyle(track);
+        return parseFloat(cs.columnGap || cs.gap || 0) || 0;
+      }
+      function originalsOf(track) {
+        return Array.prototype.filter.call(track.children, function (c) {
+          return !c.classList.contains('row-clone');
+        });
+      }
+      function contentWidth(track) {
+        var gap = gapOf(track), kids = originalsOf(track), w = 0;
+        kids.forEach(function (c, i) { w += c.getBoundingClientRect().width + (i ? gap : 0); });
+        return w;
+      }
+      function teardown(track) {
+        Array.prototype.slice.call(track.querySelectorAll('.row-clone')).forEach(function (c) { c.remove(); });
+        track.dataset.loop = '';
+        track.scrollLeft = 0;
+      }
+      function setup(track) {
+        var kids = originalsOf(track);
+        if (!kids.length) return;
+        var stride = contentWidth(track) + gapOf(track);
+        track.dataset.loop = 'on';
+        track.dataset.stride = stride;
+        [0, 1].forEach(function () {
+          kids.forEach(function (c) {
+            var cl = c.cloneNode(true);
+            cl.classList.add('row-clone');
+            cl.setAttribute('aria-hidden', 'true');
+            cl.tabIndex = -1;
+            track.appendChild(cl);
+          });
+        });
+        track.scrollLeft = stride;
+        if (!track.dataset.bound) {
+          track.dataset.bound = '1';
+          var ticking = false;
+          track.addEventListener('scroll', function () {
+            if (track.dataset.loop !== 'on' || ticking) return;
+            ticking = true;
+            requestAnimationFrame(function () {
+              var s = parseFloat(track.dataset.stride) || 0;
+              if (s > 0) {
+                if (track.scrollLeft >= 2 * s) track.scrollLeft -= s;
+                else if (track.scrollLeft <= 0) track.scrollLeft += s;
+              }
+              ticking = false;
+            });
+          }, { passive: true });
+        }
+      }
+      function refresh() {
+        Array.prototype.slice.call(document.querySelectorAll('.row-track')).forEach(function (track) {
+          var visible = track.offsetParent !== null;
+          var on = track.dataset.loop === 'on';
+          if (!visible) { if (on) teardown(track); return; }
+          var overflow = contentWidth(track) > track.clientWidth + 1;
+          if (overflow && !on) setup(track);
+          else if (!overflow && on) teardown(track);
+        });
+      }
+      var t;
+      function debounced() { clearTimeout(t); t = setTimeout(refresh, 150); }
+      window.addEventListener('resize', debounced);
+      window.addEventListener('load', refresh);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+      new MutationObserver(debounced).observe(document.documentElement, { attributes: true, attributeFilter: ['data-view'] });
+      if (document.readyState === 'complete') refresh();
+      else document.addEventListener('DOMContentLoaded', refresh);
+    })();
+  </script>
 
 </body>
 </html>

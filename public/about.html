@@ -1,15 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — Victoria Deng</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
 </head>
 <body>
 
-  <a href="index.html" class="back-nav">Home</a>
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shared circle -->
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <!-- Sun rays -->
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <!-- Two-arc crescent moon -->
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+
+  <a href="index.html" class="back-nav">Back</a>
   <span class="page-num">I</span>
 
   <main class="page-wrapper">
@@ -21,14 +64,15 @@
     <div class="about-intro">
       <img class="about-photo" src="hero.jpg" alt="Victoria Deng" />
       <div class="about-bio">
-        <p>Hi, I'm Victoria — a finance and data analyst based in New York with 2+ years of experience delivering performance analytics, reporting, and stakeholder-ready insights.</p>
-        <p>I work at the intersection of data, technology, and strategy — building dashboards, supporting data migrations, and translating complex datasets into clear narratives for both technical and non-technical audiences.</p>
+        <p data-views="friend">Hey! So glad you made it here. This is the less-formal corner — the running, the films, the places I've wandered. The résumé stuff is tucked away unless you switch views up top.</p>
+        <p data-views="recruiter self">Hi, I'm Victoria — a business intelligence analyst based in New York with 2+ years of experience developing dashboards, data pipelines, and KPI frameworks that drive decision-making for cross-functional stakeholders.</p>
+        <p data-views="recruiter self">Skilled in SQL, Python, Power BI, and Alteryx, with hands-on experience in data warehouse migration, data modeling, and requirements documentation — translating complex datasets into clear, actionable narratives for both technical and non-technical audiences.</p>
         <p>Outside of work I run marathons, travel, create content (<a href="https://www.instagram.com/big_toeria/" target="_blank">@big_toeria</a>), and explore new places with my camera.</p>
       </div>
     </div>
 
     <!-- Work Experience — expandable bullets -->
-    <section class="tabs-section">
+    <section class="tabs-section" data-views="recruiter self">
       <h2>Experience</h2>
 
       <ul class="exp-list">
@@ -40,12 +84,12 @@
               <span class="exp-trigger-name">Morgan Stanley</span>
             </div>
             <div class="exp-trigger-right" style="display:flex;align-items:center;gap:1.5rem;">
-              <span class="exp-trigger-role">Business Analyst, PM</span>
+              <span class="exp-trigger-role">Business Analyst Associate, Project Manager</span>
               <span class="exp-chevron">▼</span>
             </div>
           </button>
           <div class="exp-body">
-            <p>Designed and deployed interactive Power BI dashboards summarizing month-end, quarter-end, and year-end financials for three cross-functional teams: Capital, Treasury, and Regulatory Financial Reporting. Partnered with users to translate complex business requirements into an integrated Finance Data Warehouse, producing requirements documentation and acceptance criteria. Tracked a 1-year data migration across stakeholders via PowerPoint, Excel, and JIRA. Created automated monthly reconciliations in Alteryx and implemented standardized data naming conventions, reducing reporting errors through workflow standardization.</p>
+            <p>Designed and deployed interactive Power BI dashboards tracking financial KPIs across three cross-functional teams — Capital, Treasury, and Regulatory Financial Reporting — enabling data-driven decision-making for finance leadership. Partnered with users to translate complex business requirements into an integrated Finance Data Warehouse, contributing to data modeling decisions and producing requirements documentation and acceptance criteria. Defined KPIs for data warehouse adoption and communicated migration progress to cross-functional finance stakeholders via PowerPoint, Excel, and JIRA. Created automated monthly reconciliations in Alteryx to validate accuracy against the general ledger, and wrote SQL queries to identify data variations between legacy and migrated sources — establishing data governance standards and reducing downstream reporting errors.</p>
           </div>
         </li>
 
@@ -77,7 +121,7 @@
             </div>
           </button>
           <div class="exp-body">
-            <p>Conducted client needs analyses to identify goals, assess performance metrics, and develop targeted training strategies. Managed scheduling, progress tracking, and retention for four clients. Collaborated cross-functionally with sales and operations to optimize client onboarding and improve conversion rates.</p>
+            <p>Conducted needs analyses and developed targeted training strategies for 4 clients, achieving 100% retention over 3 months by prioritizing measurable progress and consistent client experience. Tracked client progress across strength and body composition metrics, delivering data-driven adjustments to training programs. Converted 40% of assessment sessions into paid 6-session packages by collaborating with sales and operations to streamline client onboarding.</p>
           </div>
         </li>
 
@@ -93,7 +137,7 @@
             </div>
           </button>
           <div class="exp-body">
-            <p>Partnered with the technology team to implement a client data migration, overseeing end-to-end data transfer from legacy systems to ensure completeness, accuracy, and alignment with business requirements. Developed and presented a weekly risk tracker showing team performance and sprint capacity. Documented requirements, project roadmap, and timelines to improve stakeholder alignment.</p>
+            <p>Partnered with the technology team to oversee end-to-end client data migration from legacy systems, validating 99% data accuracy across sources to ensure completeness and alignment with business requirements. Developed and presented a weekly risk tracker showing team performance and sprint capacity, proactively identifying and addressing potential roadblocks to ensure on-time delivery. Documented requirements, project roadmap, and timelines to improve stakeholder alignment and reduce scope creep.</p>
           </div>
         </li>
 
@@ -126,7 +170,7 @@
     </section>
 
     <!-- Skills -->
-    <section class="tabs-section">
+    <section class="tabs-section" data-views="recruiter self">
       <h2>Skills</h2>
 
       <ul class="exp-list">
@@ -135,14 +179,14 @@
           <button class="exp-trigger" aria-expanded="false">
             <div class="exp-trigger-left">
               <span class="exp-trigger-date" style="min-width:0; width:110px;">Analytics & BI</span>
-              <span class="exp-trigger-name">SQL, Power BI, Excel, Dashboarding</span>
+              <span class="exp-trigger-name">SQL, Power BI, Looker, Excel, Dashboarding</span>
             </div>
             <div class="exp-trigger-right" style="display:flex;align-items:center;gap:1.5rem;">
               <span class="exp-chevron">▼</span>
             </div>
           </button>
           <div class="exp-body">
-            <p>SQL · Power BI · Excel (advanced reporting) · PowerPoint · Dashboarding · Data Storytelling · Root-Cause Analysis · Data Quality · Data Governance · Requirements Documentation · Operational Reporting · Metrics Tracking</p>
+            <p>SQL · Power BI · Looker · Excel (advanced reporting) · PowerPoint · Dashboarding · Data Storytelling · Root-Cause Analysis · Data Quality · Data Governance · Requirements Documentation · Operational Reporting · Metrics Tracking</p>
           </div>
         </li>
 
@@ -172,7 +216,7 @@
             </div>
           </button>
           <div class="exp-body">
-            <p>Python · Java · GitHub · JIRA · Agile Development · AWS (Cloud Practitioner certified) · RESTful APIs · Full-stack development</p>
+            <p>Python · Java · GitHub · JIRA · Agile Development · AWS · RESTful APIs · Full-stack development</p>
           </div>
         </li>
 
@@ -188,6 +232,21 @@
           </button>
           <div class="exp-body">
             <p>English (Native) · Mandarin Chinese (Native)</p>
+          </div>
+        </li>
+
+        <li class="exp-item">
+          <button class="exp-trigger" aria-expanded="false">
+            <div class="exp-trigger-left">
+              <span class="exp-trigger-date" style="min-width:0; width:110px;">Certifications</span>
+              <span class="exp-trigger-name">AWS Cloud Practitioner, ISSA CPT, Red Cross CPR/AED</span>
+            </div>
+            <div class="exp-trigger-right" style="display:flex;align-items:center;gap:1.5rem;">
+              <span class="exp-chevron">▼</span>
+            </div>
+          </button>
+          <div class="exp-body">
+            <p>AWS Cloud Practitioner · ISSA Certified Personal Trainer · Red Cross CPR/AED</p>
           </div>
         </li>
 
@@ -252,7 +311,10 @@
         })
         .catch(err => console.error('Error:', err));
     });
+
   </script>
+  <script src="theme.js"></script>
+  <script src="view.js"></script>
 
 </body>
 </html>

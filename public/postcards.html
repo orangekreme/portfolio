@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Postcards — Victoria Deng</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
+</head>
+<body>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+  <a href="index.html" class="back-nav">Back</a>
+  <span class="page-num">Postcards</span>
+
+  <main class="page-wrapper" style="max-width: 760px;">
+    <header class="page-header">
+      <h1 class="page-title">Postcards</h1>
+    </header>
+
+    <p class="travel-intro">Postcards I've received, sent, and collected.</p>
+
+    <!-- One-line toolbar: segment · deck/grid · filters · lock -->
+    <div class="pc-toolbar">
+      <div class="pc-filters" id="pc-filters" role="tablist" aria-label="Filter postcards"></div>
+      <div class="pc-modetoggle" id="pc-modetoggle" hidden>
+        <button class="pc-mode-btn is-active" id="pc-mode-deck" type="button">Deck</button>
+        <button class="pc-mode-btn" id="pc-mode-grid" type="button">Grid</button>
+      </div>
+      <div class="pc-gridfilters" id="pc-gridfilters" hidden>
+        <select class="pc-fsel" id="pc-filter-sender" aria-label="Filter by sender or recipient"></select>
+        <select class="pc-fsel" id="pc-filter-date" aria-label="Filter by date"></select>
+      </div>
+      <button class="pc-lock" id="pc-lock" hidden aria-label="Enter passcode to unlock the backs">🔒</button>
+    </div>
+
+    <!-- Deck view -->
+    <div id="pc-deckview">
+      <div class="pc-stage" id="pc-stage">
+        <p class="pc-status" id="pc-status">Loading postcards…</p>
+      </div>
+      <div class="pc-caption" id="pc-caption" hidden></div>
+      <div class="pc-nav" id="pc-nav" hidden>
+        <button class="pc-arrow" id="pc-prev" aria-label="Previous postcard">‹</button>
+        <span class="pc-counter" id="pc-counter">0 / 0</span>
+        <button class="pc-arrow" id="pc-next" aria-label="Next postcard">›</button>
+      </div>
+    </div>
+
+    <!-- Grid view -->
+    <div class="pc-grid" id="pc-grid" hidden></div>
+  </main>
+
+  <!-- Passcode popup -->
+  <div class="pc-pass-modal" id="pc-pass-modal" role="dialog" aria-modal="true" aria-label="Enter passcode">
+    <div class="pc-pass-box">
+      <button class="pc-pass-close" id="pc-pass-close" aria-label="Close">✕</button>
+      <p class="pc-pass-title">🔒 Enter passcode</p>
+      <form class="pc-pass-form" id="pc-pass-form">
+        <input type="password" class="pc-pass-input" id="pc-pass-input" placeholder="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <button type="submit" class="pc-pass-ok">Unlock</button>
+      </form>
+      <p class="pc-pass-msg" id="pc-pass-msg" role="status"></p>
+    </div>
+  </div>
+
+  <script>
+    function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':s; return d.innerHTML; }
+    // Dates display as month + year only, e.g. "03/29/2026" → "Mar 2026".
+    function monthYear(d){
+      var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(d || '');
+      if (!m) return d || '';
+      return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m[1]-1] + ' ' + m[3];
+    }
+    function ymKey(d){ var m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(d||''); return m ? (+m[3])*100 + (+m[1]) : 0; }
+
+    const FILTERS = [
+      { id: 'Received',  label: 'Received' },
+      { id: 'Sent',      label: 'Sent' },
+      { id: 'Collected', label: 'Collected' },
+    ];
+
+    const statusEl  = document.getElementById('pc-status');
+    const stage     = document.getElementById('pc-stage');
+    const captionEl = document.getElementById('pc-caption');
+    const navEl     = document.getElementById('pc-nav');
+    const counterEl = document.getElementById('pc-counter');
+    const filtersEl = document.getElementById('pc-filters');
+    const lockEl    = document.getElementById('pc-lock');
+    const deckView  = document.getElementById('pc-deckview');
+    const gridEl    = document.getElementById('pc-grid');
+    const modetoggle = document.getElementById('pc-modetoggle');
+    const gridFiltersEl = document.getElementById('pc-gridfilters');
+    const senderSel = document.getElementById('pc-filter-sender');
+    const dateSel   = document.getElementById('pc-filter-date');
+
+    let allCards = [];
+    let view = [];        // current segment's cards
+    let idx = 0;
+    let filter = 'Received';
+    let mode = 'deck';    // 'deck' | 'grid' (grid unlocks after passcode)
+    let unlocked = false;
+    let backs = {};       // id -> { backImage, from, to } (only after unlock)
+    let devBacks = {};    // localhost-only: back data from the sample fixture
+    const isLocal = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+
+    // Who the card is "with" — sender for received, recipient for sent (from the gated back).
+    function who(card) { const B = backs[card.id] || {}; return (card.type === 'Sent' ? B.to : B.from) || ''; }
+
+    // ── Data load (live API, with a localhost-only sample fallback for dev) ──
+    async function loadPostcards() {
+      try {
+        const r = await fetch('/api/postcards');
+        if (!r.ok) throw new Error('bad status');
+        const d = await r.json();
+        if (d.postcards && d.postcards.length) return d.postcards;
+        throw new Error('empty');
+      } catch (e) {
+        if (isLocal) {
+          try {
+            const r = await fetch('./sample/postcards.json', { cache: 'no-store' });
+            const d = await r.json();
+            return d.postcards || [];
+          } catch (_) { /* fall through */ }
+        }
+        return [];
+      }
+    }
+
+    // Segmented Received / Sent / Collected selector — one segment per type that has cards.
+    function buildFilters() {
+      filtersEl.innerHTML = '';
+      const seg = document.createElement('div');
+      seg.className = 'pc-seg';
+      FILTERS.forEach(f => {
+        const count = allCards.filter(c => c.type === f.id).length;
+        if (count === 0) return;
+        const btn = document.createElement('button');
+        btn.className = 'pc-seg-btn' + (f.id === filter ? ' is-active' : '');
+        btn.setAttribute('role', 'tab');
+        btn.innerHTML = esc(f.label) + '<span class="pc-seg-count">' + count + '</span>';
+        btn.addEventListener('click', () => setFilter(f.id));
+        seg.appendChild(btn);
+      });
+      filtersEl.appendChild(seg);
+    }
+
+    function setFilter(id) {
+      filter = id; idx = 0;
+      view = allCards.filter(c => c.type === id);
+      buildFilters();
+      if (mode === 'grid') buildGridFilters();
+      render();
+    }
+
+    // ── Rendering ─────────────────────────────────────────────────────────────
+    function render() {
+      if (mode === 'grid' && unlocked) { deckView.hidden = true; gridEl.hidden = false; renderGrid(); }
+      else { gridEl.hidden = true; deckView.hidden = false; renderDeck(); }
+    }
+
+    function cardFaces(card, canFlip) {
+      const B = backs[card.id] || {};
+      const frontInner = card.frontImage
+        ? '<img src="' + esc(card.frontImage) + '" alt="' + esc(card.name || 'Postcard') + '" />'
+        : '<div class="pc-noframe"><span class="pc-noframe-label">Letter</span></div>';
+      let back = '';
+      if (canFlip) {
+        back = '<div class="pc-face pc-back">' +
+          (B.backImage ? '<img class="pc-back-img" src="' + esc(B.backImage) + '" alt="' + esc(card.name || 'Postcard') + ' back" />' : '') +
+        '</div>';
+      }
+      const front = '<div class="pc-face pc-front">' + frontInner +
+        (canFlip ? '<span class="pc-flip-hint">flip ⟲</span>' : '') + '</div>';
+      return front + back;
+    }
+
+    function renderDeck() {
+      if (!view.length) {
+        stage.innerHTML = '<p class="pc-status">No postcards here yet.</p>';
+        captionEl.hidden = true; navEl.hidden = true; return;
+      }
+      const card = view[idx];
+      const canFlip = unlocked && card.hasBack && card.type !== 'Collected';
+
+      stage.innerHTML =
+        '<div class="pc-deck">' +
+          '<div class="pc-stack-edge pc-stack-edge--2"></div>' +
+          '<div class="pc-stack-edge pc-stack-edge--1"></div>' +
+          '<div class="pc-card' + (canFlip ? '' : ' is-noflip') + '" id="pc-card" data-type="' + esc(card.type) + '">' +
+            '<div class="pc-card-inner">' + cardFaces(card, canFlip) + '</div>' +
+          '</div>' +
+        '</div>';
+      if (canFlip) document.getElementById('pc-card').addEventListener('click', flipCurrent);
+
+      const capParts = [card.location, monthYear(card.displayDate)].filter(Boolean);
+      captionEl.innerHTML = capParts.length ? '<span class="pc-caption-place">' + esc(capParts.join('  ·  ')) + '</span>' : '';
+      captionEl.hidden = !capParts.length;
+
+      counterEl.textContent = (idx + 1) + ' / ' + view.length;
+      navEl.hidden = view.length <= 1;
+    }
+
+    function gridList() {
+      const s = senderSel.value, dt = dateSel.value;
+      return view.filter(c =>
+        (!s  || who(c) === s) &&
+        (!dt || monthYear(c.displayDate) === dt)
+      );
+    }
+
+    function renderGrid() {
+      const list = gridList();
+      if (!list.length) { gridEl.innerHTML = '<p class="pc-status">No postcards match.</p>'; return; }
+      gridEl.innerHTML = '';
+      list.forEach(card => {
+        const canFlip = card.hasBack && card.type !== 'Collected';
+        const tile = document.createElement('div');
+        tile.className = 'pc-gtile';
+        tile.innerHTML =
+          '<div class="pc-gtile-card' + (canFlip ? '' : ' is-noflip') + '">' +
+            '<div class="pc-gtile-inner">' + cardFaces(card, canFlip) + '</div>' +
+          '</div>' +
+          '<div class="pc-gtile-cap">' + esc([card.location, monthYear(card.displayDate)].filter(Boolean).join(' · ')) + '</div>';
+        if (canFlip) {
+          const c = tile.querySelector('.pc-gtile-card');
+          c.addEventListener('click', () => c.classList.toggle('is-flipped'));
+        }
+        gridEl.appendChild(tile);
+      });
+    }
+
+    // ── Grid filters (sender/recipient + date) ──────────────────────────────────
+    function buildGridFilters() {
+      const senders = [...new Set(view.map(who).filter(Boolean))].sort();
+      // Month-year options, deduped and sorted chronologically.
+      const byMy = {};
+      view.map(c => c.displayDate).filter(Boolean).forEach(d => {
+        const my = monthYear(d), k = ymKey(d);
+        if (!byMy[my] || k < byMy[my]) byMy[my] = k;
+      });
+      const dates = Object.keys(byMy).sort((a, b) => byMy[a] - byMy[b]);
+      const senderLabel = filter === 'Sent' ? 'All recipients' : 'All senders';
+      senderSel.innerHTML = '<option value="">' + senderLabel + '</option>' +
+        senders.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('');
+      dateSel.innerHTML = '<option value="">All dates</option>' +
+        dates.map(d => '<option value="' + esc(d) + '">' + esc(d) + '</option>').join('');
+      senderSel.style.display = senders.length ? '' : 'none';
+      dateSel.style.display = dates.length ? '' : 'none';
+    }
+    senderSel.addEventListener('change', renderGrid);
+    dateSel.addEventListener('change', renderGrid);
+
+    function setMode(m) {
+      mode = m;
+      document.getElementById('pc-mode-deck').classList.toggle('is-active', m === 'deck');
+      document.getElementById('pc-mode-grid').classList.toggle('is-active', m === 'grid');
+      gridFiltersEl.hidden = m !== 'grid';
+      if (m === 'grid') buildGridFilters();
+      render();
+    }
+    document.getElementById('pc-mode-deck').addEventListener('click', () => setMode('deck'));
+    document.getElementById('pc-mode-grid').addEventListener('click', () => setMode('grid'));
+
+    function flipCurrent() {
+      const cardEl = document.getElementById('pc-card');
+      if (cardEl && !cardEl.classList.contains('is-noflip')) cardEl.classList.toggle('is-flipped');
+    }
+    function go(delta) {
+      if (mode !== 'deck' || !view.length) return;
+      idx = (idx + delta + view.length) % view.length;
+      renderDeck();
+    }
+    document.getElementById('pc-prev').addEventListener('click', () => go(-1));
+    document.getElementById('pc-next').addEventListener('click', () => go(1));
+
+    // ── Passcode popup ───────────────────────────────────────────────────────────
+    const passModal = document.getElementById('pc-pass-modal');
+    const passForm  = document.getElementById('pc-pass-form');
+    const passInput = document.getElementById('pc-pass-input');
+    const passMsg   = document.getElementById('pc-pass-msg');
+
+    function openPass() {
+      if (unlocked) return;
+      passMsg.textContent = ''; passInput.value = '';
+      passModal.classList.add('is-open');
+      document.body.classList.add('pf-no-scroll');
+      setTimeout(() => passInput.focus(), 30);
+    }
+    function closePass() {
+      passModal.classList.remove('is-open');
+      document.body.classList.remove('pf-no-scroll');
+      passInput.blur();
+    }
+    lockEl.addEventListener('click', openPass);
+    document.getElementById('pc-pass-close').addEventListener('click', closePass);
+    passModal.addEventListener('click', e => { if (e.target === passModal) closePass(); });
+
+    passForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const pass = passInput.value.trim();
+      if (!pass) return;
+      try {
+        const r = await fetch('/api/postcard-backs', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pass })
+        });
+        if (!r.ok) throw new Error('bad');
+        const d = await r.json();
+        (d.backs || []).forEach(b => { backs[b.id] = { backImage: b.backImage, from: b.from, to: b.to }; });
+        onUnlocked();
+      } catch (err) {
+        if (isLocal) { backs = Object.assign({}, devBacks); onUnlocked(); } // dev bypass
+        else { passMsg.textContent = 'Wrong passcode — try again.'; passInput.select(); }
+      }
+    });
+    function onUnlocked() {
+      unlocked = true;
+      lockEl.textContent = '🔓';
+      lockEl.classList.add('is-unlocked');
+      lockEl.setAttribute('aria-label', 'Backs unlocked');
+      closePass();
+      modetoggle.hidden = false;   // reveal the Deck/Grid toggle (stay in Deck)
+      // Preload the back images so the first flip doesn't flash.
+      Object.keys(backs).forEach(function (id) { var b = backs[id]; if (b && b.backImage) { var im = new Image(); im.src = b.backImage; } });
+      render();
+    }
+
+    // ── Keyboard: ← → navigate (deck), space flips (deck, once unlocked) ─────────
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closePass(); return; }
+      const typing = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+      if (typing || mode !== 'deck') return;
+      if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'ArrowRight') go(1);
+      else if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); flipCurrent(); }
+    });
+
+    // ── Boot ────────────────────────────────────────────────────────────────────
+    loadPostcards().then(cards => {
+      allCards = cards.map((c, i) => {
+        const id = c.id || ('pc' + i);
+        const hasBack = c.hasBack != null ? c.hasBack : !!c.backImage;
+        if (c.backImage || c.from || c.to) devBacks[id] = { backImage: c.backImage, from: c.from, to: c.to };
+        return { id: id, name: c.name, type: c.type, frontImage: c.frontImage || '',
+                 location: c.location, displayDate: c.displayDate || '', hasBack: hasBack };
+      });
+      if (!allCards.length) {
+        stage.innerHTML = '<p class="pc-status">No postcards yet.</p>';
+        return;
+      }
+      lockEl.hidden = !allCards.some(c => c.hasBack && c.type !== 'Collected');
+      const firstType = FILTERS.find(f => allCards.some(c => c.type === f.id));
+      setFilter(firstType ? firstType.id : 'Received');
+    });
+  </script>
+  <script src="theme.js"></script>
+  <script src="view.js"></script>
+
+</body>
+</html>

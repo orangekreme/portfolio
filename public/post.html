@@ -1,15 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Post — Victoria Deng</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
 </head>
 <body>
 
-  <a href="thoughts.html" class="back-nav">Thoughts</a>
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shared circle -->
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <!-- Sun rays -->
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <!-- Two-arc crescent moon -->
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+  <a href="thoughts.html" class="back-nav">Back</a>
   <span class="page-num">III</span>
 
   <main class="post-wrapper" id="post-wrapper">
@@ -29,50 +71,41 @@
           return r.json();
         })
         .then(data => {
-          // Update page title
           document.title = `${data.title} — Victoria Deng`;
-
-          // Render blocks to HTML
-          const bodyHtml = data.blocks.map(block => {
-            switch (block.type) {
-              case 'paragraph':
-                return block.text ? `<p>${block.text}</p>` : '';
-              case 'heading_1':
-                return `<h1>${block.text}</h1>`;
-              case 'heading_2':
-                return `<h2>${block.text}</h2>`;
-              case 'heading_3':
-                return `<h3>${block.text}</h3>`;
-              case 'quote':
-                return `<blockquote>${block.text}</blockquote>`;
-              case 'bulleted_list_item':
-                return `<ul><li>${block.text}</li></ul>`;
-              case 'numbered_list_item':
-                return `<ol><li>${block.text}</li></ol>`;
-              case 'divider':
-                return `<hr class="post-divider" />`;
-              default:
-                return '';
-            }
-          }).join('\n');
 
           wrapper.innerHTML = `
             <header class="post-header">
-              <div class="post-meta">
-                <span class="post-date">${data.monthYear}</span>
-                <span class="post-tag">${data.tag}</span>
-              </div>
               <h1 class="post-title">${data.title}</h1>
+              <div class="post-meta">
+                <span class="post-date">${data.displayDate || data.monthYear}</span>
+              </div>
+              ${data.excerpt ? `<p class="post-excerpt">${data.excerpt}</p>` : ''}
             </header>
             <hr class="post-divider" />
-            <div class="post-body">${bodyHtml}</div>
+            <div class="post-body substack-body">${data.body}</div>
+            ${data.substackUrl ? `
+            <div class="post-substack-link">
+              <a href="${data.substackUrl}" target="_blank" rel="noopener">Read on Substack ↗</a>
+            </div>` : ''}
           `;
         })
         .catch(() => {
           wrapper.innerHTML = '<p>Could not load post.</p>';
         });
     }
+    // Theme toggle
+    (function() {
+      const saved = localStorage.getItem('vd-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('vd-theme', next);
+    });
   </script>
+  <script src="view.js"></script>
 
 </body>
 </html>

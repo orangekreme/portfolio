@@ -1,44 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Travel — Victoria Deng</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://api.fontshare.com/v2/css?f[]=inter@200,300,400,500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    /* Set the active profile pre-paint to avoid a flash of the wrong view. */
+    (function () {
+      var V = ['recruiter', 'friend', 'self'];
+      var p = new URLSearchParams(location.search).get('view');
+      var s = null; try { s = sessionStorage.getItem('vd-view'); } catch (e) {}
+      var v = V.indexOf(p) > -1 ? p : (V.indexOf(s) > -1 ? s : 'recruiter');
+      document.documentElement.setAttribute('data-view', v);
+      if (V.indexOf(p) > -1) { try { sessionStorage.setItem('vd-view', v); } catch (e) {} }
+    })();
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTB0S0SWH2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CTB0S0SWH2');
+  </script>
 </head>
 <body>
 
-  <a href="work.html" class="back-nav">Work</a>
-  <span class="page-num">II — III</span>
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shared circle -->
+      <circle class="sun-body" cx="12" cy="12" r="4.5"/>
+      <!-- Sun rays -->
+      <g class="sun-rays">
+        <line x1="12" y1="2" x2="12" y2="4.5"/>
+        <line x1="12" y1="19.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="4.5" y2="12"/>
+        <line x1="19.5" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="4.93" x2="6.64" y2="6.64"/>
+        <line x1="17.36" y1="17.36" x2="19.07" y2="19.07"/>
+        <line x1="19.07" y1="4.93" x2="17.36" y2="6.64"/>
+        <line x1="6.64" y1="17.36" x2="4.93" y2="19.07"/>
+      </g>
+      <!-- Two-arc crescent moon -->
+      <path class="moon-arc" d="M 15 4 A 9 9 0 1 0 15 20"/>
+      <path class="moon-arc" d="M 15 4 A 8 8 0 0 0 15 20"/>
+    </svg>
+  </button>
+  <a href="index.html" class="back-nav">Back</a>
 
   <div class="map-tooltip" id="tooltip"></div>
 
-  <main class="page-wrapper" style="max-width: 900px;">
+  <main class="page-wrapper travel-main" style="max-width: 1080px;">
     <header class="page-header">
-      <span class="page-section-num">III — Travel</span>
       <h1 class="page-title">Travel</h1>
     </header>
 
-    <p class="travel-intro">Countries I've visited, highlighted in gold. Click a country to learn more.</p>
+    <p class="travel-intro">Countries I've visited, highlighted in teal. Click a country to learn more.</p>
 
-    <!-- World map via a simple SVG embed using Natural Earth data paths (simplified) -->
-    <div class="map-container" id="map-container">
-      <!-- We use an inline SVG world map. Country paths are identified by ISO 3166-1 alpha-2 codes. -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 2000 1001"
-        id="world-map"
-        aria-label="World map showing visited countries"
-      >
-        <!-- This SVG uses the Natural Earth projection. Each path has a data-code and data-name attribute. -->
-        <!-- We load the actual paths from a JSON source via JS below. -->
-      </svg>
+    <div class="countries-layout">
+      <div class="map-container" id="map-container">
+        <canvas id="globe-canvas" style="display:block; cursor:grab;"></canvas>
+      </div>
+      <div class="countries-side">
+        <p class="country-count" id="country-count">Loading map…</p>
+        <div class="country-list" id="country-list"></div>
+      </div>
     </div>
-
-    <p class="country-count" id="country-count">Loading map…</p>
-
-    <div class="country-list" id="country-list"></div>
   </main>
 
   <!-- Popup / modal for country detail -->
@@ -52,18 +84,20 @@
     justify-content: center;
   ">
     <div style="
-      background: #0f0d08;
-      border: 1px solid rgba(201,169,110,0.25);
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
       max-width: 420px;
       width: 90%;
       padding: 2.5rem;
       position: relative;
+      max-height: 88vh;
+      overflow-y: auto;
     ">
       <button id="modal-close" style="
         position: absolute;
         top: 1rem; right: 1rem;
         background: none; border: none;
-        color: #c9a96e; font-size: 1.2rem;
+        color: var(--accent); font-size: 1.2rem;
         cursor: pointer; opacity: 0.6;
         transition: opacity 0.2s;
         font-family: inherit;
@@ -74,12 +108,23 @@
         font-weight: 200;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #e8dcc8;
+        color: var(--text);
         margin-bottom: 0.5rem;
       "></h2>
+      <canvas id="us-map-canvas" style="display:none; width:100%; border-radius:2px; margin:1rem 0 0.5rem;"></canvas>
+      <div id="modal-dates" style="
+        font-size: 0.6rem;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        opacity: 0.6;
+        margin-top: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      "></div>
       <p id="modal-note" style="
         font-size: 0.8rem;
-        color: #6b5f4f;
+        color: var(--text-3);
         line-height: 1.7;
         letter-spacing: 0.03em;
         margin-top: 1rem;
@@ -87,121 +132,659 @@
     </div>
   </div>
 
+  <!-- State detail popup (appears when clicking a state on the US map) -->
+  <div id="state-popup" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      max-width: 340px;
+      width: 90%;
+      padding: 2rem;
+      position: relative;
+      max-height: 70vh;
+      overflow-y: auto;
+    ">
+      <button id="state-popup-close" style="
+        position: absolute;
+        top: 0.75rem; right: 0.75rem;
+        background: none; border: none;
+        color: var(--accent); font-size: 1.1rem;
+        cursor: pointer; opacity: 0.6;
+        transition: opacity 0.2s;
+        font-family: inherit;
+      " aria-label="Close">✕</button>
+      <h3 id="state-popup-name" style="
+        font-size: 1rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text);
+        margin-bottom: 1rem;
+      "></h3>
+      <div id="state-popup-dates" style="
+        font-size: 0.6rem;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        opacity: 0.7;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      "></div>
+    </div>
+  </div>
+
+  <!-- D3 for globe projection -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+
   <script>
-    const tooltip = document.getElementById('tooltip');
-    const modal = document.getElementById('country-modal');
+    // ─── DOM refs ───────────────────────────────────────────────────────────────
+    const tooltip   = document.getElementById('tooltip');
+    const modal     = document.getElementById('country-modal');
     const modalName = document.getElementById('modal-name');
     const modalFlag = document.getElementById('modal-flag');
+    const modalDates= document.getElementById('modal-dates');
     const modalNote = document.getElementById('modal-note');
-    const modalClose = document.getElementById('modal-close');
+    const modalClose= document.getElementById('modal-close');
     const countryCount = document.getElementById('country-count');
-    const countryList = document.getElementById('country-list');
+    const countryList  = document.getElementById('country-list');
 
     modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 
-    function projectPoint(lon, lat, width, height) {
-      return [(lon + 180) / 360 * width, (90 - lat) / 180 * height];
+    // ─── Modal opener ────────────────────────────────────────────────────────────
+    function openModal(infoOrTrips, nameOverride) {
+      // Hide US map canvas and reset modal width for regular country modals
+      document.getElementById('us-map-canvas').style.display = 'none';
+      modal.querySelector('div').style.maxWidth = '420px';
+
+      const tripsArr = Array.isArray(infoOrTrips) ? infoOrTrips : [infoOrTrips];
+      const first = tripsArr[0];
+      modalName.textContent = nameOverride || first.name;
+      modalFlag.textContent = first.flag;
+      modalNote.textContent = first.note || '';
+
+      const sorted = [...tripsArr].sort((a, b) => {
+        if (!a.enterDate && !b.enterDate) return 0;
+        if (!a.enterDate) return 1;
+        if (!b.enterDate) return -1;
+        return a.enterDate.localeCompare(b.enterDate);
+      });
+
+      modalDates.innerHTML = '';
+      sorted.forEach(trip => {
+        const enter = trip.enterFmt || '';
+        const exit  = trip.exitFmt  || '';
+        const dateStr = enter && exit ? `${enter} — ${exit}` : enter || exit || '—';
+        const span = document.createElement('span');
+        span.textContent = dateStr;
+        modalDates.appendChild(span);
+      });
+
+      modal.style.display = 'flex';
     }
 
-    function coordsToPath(geometry, width, height) {
-      function ringToD(coords) {
-        return coords.map((pt, i) => {
-          const [x, y] = projectPoint(pt[0], pt[1], width, height);
-          return (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
-        }).join(' ') + ' Z';
+    // ─── US states map helpers ────────────────────────────────────────────────
+    async function ensureUSStates() {
+      if (usStatesGeo) return;
+      // Lazy-load topojson-client if not already present
+      if (!window.topojson) {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
       }
-      if (geometry.type === 'Polygon') return geometry.coordinates.map(ringToD).join(' ');
-      if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(p => p.map(ringToD).join(' ')).join(' ');
-      return '';
+      const r = await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json');
+      const us = await r.json();
+      usStatesGeo = window.topojson.feature(us, us.objects.states);
     }
 
-    async function loadMap() {
-      const svg = document.getElementById('world-map');
-      const W = 2000, H = 1001;
+    function drawUSMap(canvas, visitedStateSet) {
+      if (!usStatesGeo) return;
+      const dpr  = window.devicePixelRatio || 1;
+      const cssW = canvas.clientWidth;
+      if (!cssW) return;
+      const cssH = Math.round(cssW / 1.65); // AlbersUSA natural aspect ratio ≈ 1.65:1
+      canvas.width  = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.height = cssH + 'px';
+      const c = canvas.getContext('2d');
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const isDark   = document.documentElement.getAttribute('data-theme') === 'dark';
+      const fillVis  = isDark ? '#2EE6C8' : '#0FA98F'; // matches globe visited color (teal)
+      const fillLand = isDark ? '#21243A' : '#D6DEC2'; // --bg-3 for contrast vs modal bg
+      const border   = isDark ? 'rgba(237,232,227,0.25)' : 'rgba(43,35,32,0.15)';
+      usMapProj  = d3.geoAlbersUsa().fitSize([cssW, cssH], usStatesGeo);
+      const path2 = d3.geoPath(usMapProj, c);
+      usStatesGeo.features.forEach(f => {
+        const isVis = visitedStateSet.has((f.properties.name || '').toLowerCase());
+        c.beginPath(); path2(f);
+        c.fillStyle = isVis ? fillVis : fillLand;
+        c.fill();
+        c.strokeStyle = border; c.lineWidth = 0.5; c.stroke();
+      });
+      // Cursor: pointer over visited states, default elsewhere
+      canvas.style.cursor = 'default';
+    }
 
-      // Fetch visited countries from Notion via API
-      let visited = {};
+    // ─── US state-breakdown modal ─────────────────────────────────────────────
+    function openUSModal(usTrips) {
+      usTripsData = usTrips; // store for state popup click handler
+
+      // Collect visited state names (normalised to lowercase for map matching)
+      usVisitedStates = new Set(
+        usTrips.map(t => (t.region || '').toLowerCase()).filter(s => s && s !== 'other')
+      );
+
+      modalName.textContent = '🇺🇸  United States';
+      modalFlag.textContent = '';
+      modalNote.textContent = '';
+      modalDates.innerHTML = '';
+
+      // Show US map canvas and widen modal
+      const mapCanvas = document.getElementById('us-map-canvas');
+      mapCanvas.style.display = 'block';
+      modal.querySelector('div').style.maxWidth = '560px';
+
+      modal.style.display = 'flex';
+
+      // Draw the map after the modal is visible (so clientWidth is available)
+      setTimeout(async () => {
+        try {
+          await ensureUSStates();
+          await new Promise(r => requestAnimationFrame(r)); // wait for layout
+          drawUSMap(mapCanvas, usVisitedStates);
+          setupUSMapInteraction(mapCanvas);
+        } catch (e) {
+          console.error('US map load failed:', e);
+          mapCanvas.style.display = 'none';
+        }
+      }, 0);
+    }
+
+    // ─── US map canvas interaction ───────────────────────────────────────────
+    // Listeners are registered once; they read from module-level usMapProj / usVisitedStates
+    function setupUSMapInteraction(canvas) {
+      if (usMapListeners) return; // already registered
+      usMapListeners = true;
+
+      canvas.addEventListener('mousemove', e => {
+        if (!usMapProj || !usStatesGeo) return;
+        const rect = canvas.getBoundingClientRect();
+        const gp = usMapProj.invert([e.clientX - rect.left, e.clientY - rect.top]);
+        if (!gp) { canvas.style.cursor = 'default'; return; }
+        const hit = usStatesGeo.features.find(f =>
+          usVisitedStates.has((f.properties.name || '').toLowerCase()) &&
+          d3.geoContains(f, gp)
+        );
+        canvas.style.cursor = hit ? 'pointer' : 'default';
+      });
+
+      canvas.addEventListener('click', e => {
+        if (!usMapProj || !usStatesGeo) return;
+        const rect = canvas.getBoundingClientRect();
+        const gp = usMapProj.invert([e.clientX - rect.left, e.clientY - rect.top]);
+        if (!gp) return;
+        const hit = usStatesGeo.features.find(f =>
+          usVisitedStates.has((f.properties.name || '').toLowerCase()) &&
+          d3.geoContains(f, gp)
+        );
+        if (hit) openStatePopup(hit.properties.name);
+      });
+    }
+
+    // ─── State detail popup ──────────────────────────────────────────────────
+    const statePopup      = document.getElementById('state-popup');
+    const statePopupClose = document.getElementById('state-popup-close');
+    const statePopupName  = document.getElementById('state-popup-name');
+    const statePopupDates = document.getElementById('state-popup-dates');
+
+    statePopupClose.addEventListener('click', () => { statePopup.style.display = 'none'; });
+    statePopup.addEventListener('click', e => { if (e.target === statePopup) statePopup.style.display = 'none'; });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') statePopup.style.display = 'none'; });
+
+    function openStatePopup(stateName) {
+      const stateTrips = usTripsData
+        .filter(t => (t.region || '').toLowerCase() === stateName.toLowerCase())
+        .sort((a, b) => (a.enterDate || '').localeCompare(b.enterDate || ''));
+
+      statePopupName.textContent = stateName.toUpperCase();
+      statePopupDates.innerHTML = '';
+
+      stateTrips.forEach(t => {
+        const enter = t.enterFmt || '';
+        const exit  = t.exitFmt  || '';
+        const city  = t.city ? t.city + ' · ' : '';
+        const dateStr = enter && exit ? `${enter} — ${exit}` : enter || exit || '—';
+        const line = document.createElement('span');
+        line.textContent = city + dateStr;
+        statePopupDates.appendChild(line);
+      });
+
+      statePopup.style.display = 'flex';
+    }
+
+    // ─── Globe state ──────────────────────────────────────────────────────────
+    let projection, pathGen, ctx, radius;
+    // [lambda, phi, gamma] — phi=-0.001 avoids D3 clipAngle(90) equatorial singularity
+    // (at phi=0 exactly, D3 adds the hemisphere boundary arc to every clipped polygon,
+    //  inverting the fill so each country paints its complement instead of itself)
+    let currentRotation = [-15, -0.001, 0];
+    let worldFeatures = [];
+    let visited = {}, trips = [], visitedByName = {};
+    let hoveredFeature = null;
+    let usStatesGeo     = null;        // cached US states TopoJSON feature collection
+    let usMapProj       = null;        // stored AlbersUSA projection for canvas hit-testing
+    let usTripsData     = [];          // stored US trips for state popup
+    let usVisitedStates = new Set();   // stored visited-state set for canvas hit-testing
+    let usMapListeners  = false;       // whether canvas listeners have been registered
+
+    // Drag state (horizontal only)
+    let dragging = false;
+    let dragStartX = null, dragStartLambda = null, lastDragX = null;
+    let velocityX = 0;
+    let inertiaFrame = null;
+    const FRICTION = 0.88;
+    const graticule = d3.geoGraticule().step([30, 30])(); // computed once, reused each draw
+
+    // ─── Theme-aware colors ───────────────────────────────────────────────────
+    function getThemeColors() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {
+        ocean:        isDark ? '#0E0F1A'              : '#EEF2E2',
+        graticule:    isDark ? 'rgba(234,246,242,0.06)' : 'rgba(20,24,43,0.06)',
+        land:         isDark ? '#21243A'              : '#D6DEC2',
+        border:       isDark ? 'rgba(46,230,200,0.22)' : 'rgba(20,24,43,0.18)',
+        visitedFill:  isDark ? '#2EE6C8'              : '#0FA98F',
+        visitedHover: isDark ? '#FF5DA2'              : '#E63B86',
+        outline:      isDark ? 'rgba(234,246,242,0.12)' : 'rgba(20,24,43,0.1)',
+      };
+    }
+
+    // ─── Canvas setup ─────────────────────────────────────────────────────────
+    function setupCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const container = document.getElementById('map-container');
+      const layout = document.querySelector('.countries-layout');
+      const side = document.querySelector('.countries-side');
+      const isDesktop = window.matchMedia('(min-width: 761px)').matches;
+
+      // On desktop, size the globe to fit the viewport height (so the page
+      // itself doesn't scroll), and make the country list its own scrollbox
+      // at the same height as the globe.
+      let diameter;
+      if (isDesktop && layout) {
+        const avail = window.innerHeight - layout.getBoundingClientRect().top - 32;
+        diameter = Math.max(260, Math.min(container.clientWidth, avail, 680));
+        if (side) side.style.height = diameter + 'px';
+      } else {
+        diameter = Math.min(container.clientWidth, 600);
+        if (side) side.style.height = '';
+      }
+
+      const canvas = document.getElementById('globe-canvas');
+      // Physical canvas size = CSS size × DPR for sharp rendering
+      canvas.width  = diameter * dpr;
+      canvas.height = diameter * dpr;
+      canvas.style.width  = diameter + 'px';
+      canvas.style.height = diameter + 'px';
+      ctx = canvas.getContext('2d');
+      // Reset transform, then scale for DPR — projection works in physical pixels
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      radius = diameter / 2;
+      projection = d3.geoOrthographic()
+        .scale(radius - 2)
+        .translate([radius, radius])
+        .rotate(currentRotation)
+        .clipAngle(90);
+      pathGen = d3.geoPath(projection, ctx);
+    }
+
+    // ─── Draw ─────────────────────────────────────────────────────────────────
+    function draw() {
+      if (!ctx) return;
+      const C = getThemeColors();
+      const diameter = radius * 2;
+      ctx.clearRect(0, 0, diameter, diameter);
+
+      // Ocean
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 1, 0, Math.PI * 2);
+      ctx.fillStyle = C.ocean;
+      ctx.fill();
+
+      // Graticule
+      ctx.beginPath();
+      pathGen(graticule);
+      ctx.strokeStyle = C.graticule;
+      ctx.lineWidth = 0.3;
+      ctx.stroke();
+
+      // World countries — direct canvas rendering.
+      // phi=-0.001 in currentRotation avoids the D3 clipAngle(90) equatorial singularity.
+      worldFeatures.forEach(feature => {
+        ctx.beginPath();
+        pathGen(feature);
+        const isVisited = feature._isVisited;
+        const isHovered = feature === hoveredFeature;
+        ctx.fillStyle = isVisited
+          ? (isHovered ? C.visitedHover : C.visitedFill)
+          : C.land;
+        ctx.fill();
+        ctx.strokeStyle = C.border;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      });
+
+      // Globe outline ring
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 1, 0, Math.PI * 2);
+      ctx.strokeStyle = C.outline;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+    }
+
+    // ─── Inertia ──────────────────────────────────────────────────────────────
+    function tickInertia() {
+      velocityX *= FRICTION;
+      if (Math.abs(velocityX) < 0.05) { inertiaFrame = null; return; }
+      currentRotation[0] += velocityX * (57.3 / radius);
+      projection.rotate(currentRotation);
+      draw();
+      inertiaFrame = requestAnimationFrame(tickInertia);
+    }
+
+    // ─── Hit detection ────────────────────────────────────────────────────────
+    function getEventXY(e) {
+      const canvas = document.getElementById('globe-canvas');
+      const rect = canvas.getBoundingClientRect();
+      const src = e.changedTouches ? e.changedTouches[0] : e.touches ? e.touches[0] : e;
+      return [src.clientX - rect.left, src.clientY - rect.top];
+    }
+
+    function findFeatureAt(xy) {
+      const geoPoint = projection.invert(xy);
+      if (!geoPoint) return null;
+      for (const f of worldFeatures) {
+        if (f._isVisited && d3.geoContains(f, geoPoint)) return f;
+      }
+      return null;
+    }
+
+    // ─── Events ───────────────────────────────────────────────────────────────
+    function openFeature(feature) {
+      const code = feature._resolvedCode;
+      const isUS = (code === 'US' || code === 'USA');
+      const countryTrips = trips.filter(t => t.code === code);
+      if (isUS && countryTrips.length) {
+        openUSModal(countryTrips);
+      } else if (countryTrips.length) {
+        openModal(countryTrips);
+      } else {
+        openModal(visited[code]);
+      }
+    }
+
+    function updateHover(xy, clientX, clientY) {
+      const feature = findFeatureAt(xy);
+      if (feature !== hoveredFeature) {
+        hoveredFeature = feature;
+        draw();
+      }
+      if (feature) {
+        const code = feature._resolvedCode;
+        tooltip.textContent = visited[code] ? visited[code].name : (feature.properties.name || '');
+        tooltip.style.left = (clientX + 14) + 'px';
+        tooltip.style.top  = (clientY - 8)  + 'px';
+        tooltip.classList.add('visible');
+      } else {
+        tooltip.classList.remove('visible');
+      }
+    }
+
+    function attachEvents() {
+      const canvas = document.getElementById('globe-canvas');
+
+      // ── Mouse ──
+      canvas.addEventListener('mousedown', (e) => {
+        if (inertiaFrame) { cancelAnimationFrame(inertiaFrame); inertiaFrame = null; }
+        dragging = true;
+        velocityX = 0;
+        dragStartX = e.clientX;
+        dragStartLambda = currentRotation[0];
+        lastDragX = e.clientX;
+        canvas.style.cursor = 'grabbing';
+        tooltip.classList.remove('visible');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (dragging) {
+          velocityX = e.clientX - lastDragX;
+          lastDragX = e.clientX;
+          currentRotation[0] = dragStartLambda + (e.clientX - dragStartX) * (57.3 / radius);
+          projection.rotate(currentRotation);
+          draw();
+        } else {
+          const xy = getEventXY(e);
+          canvas.style.cursor = findFeatureAt(xy) ? 'pointer' : 'grab';
+          updateHover(xy, e.clientX, e.clientY);
+        }
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        canvas.style.cursor = 'grab';
+        // Start inertia if there's enough velocity
+        if (Math.abs(velocityX) > 0.5) {
+          inertiaFrame = requestAnimationFrame(tickInertia);
+        }
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        if (!dragging) {
+          hoveredFeature = null;
+          tooltip.classList.remove('visible');
+          draw();
+        }
+      });
+
+      // Click: only fires if mouse didn't move much (not a drag)
+      canvas.addEventListener('click', (e) => {
+        const dist = dragStartX !== null ? Math.abs(e.clientX - dragStartX) : 0;
+        if (dist < 4) {
+          const feature = findFeatureAt(getEventXY(e));
+          if (feature) openFeature(feature);
+        }
+      });
+
+      // ── Touch ──
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (inertiaFrame) { cancelAnimationFrame(inertiaFrame); inertiaFrame = null; }
+        dragging = true;
+        velocityX = 0;
+        dragStartX = e.touches[0].clientX;
+        dragStartLambda = currentRotation[0];
+        lastDragX = e.touches[0].clientX;
+      }, { passive: false });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        e.preventDefault();
+        velocityX = e.touches[0].clientX - lastDragX;
+        lastDragX = e.touches[0].clientX;
+        currentRotation[0] = dragStartLambda + (e.touches[0].clientX - dragStartX) * (57.3 / radius);
+        projection.rotate(currentRotation);
+        draw();
+      }, { passive: false });
+
+      window.addEventListener('touchend', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const dist = Math.abs(e.changedTouches[0].clientX - dragStartX);
+        if (dist < 4) {
+          const feature = findFeatureAt(getEventXY(e));
+          if (feature) openFeature(feature);
+        } else if (Math.abs(velocityX) > 0.5) {
+          inertiaFrame = requestAnimationFrame(tickInertia);
+        }
+      });
+    }
+
+    // ─── Main loader ──────────────────────────────────────────────────────────
+    async function loadGlobe() {
+      // 1. Visited data from API
       try {
         const r = await fetch('/api/countries');
         const data = await r.json();
         visited = data.visited || {};
+        trips   = data.trips   || [];
       } catch (e) {
         countryCount.textContent = 'Could not load country data.';
         return;
       }
 
-      // Fetch world map GeoJSON
+      // Build lookup maps
+      Object.entries(visited).forEach(([k, v]) => {
+        visitedByName[v.name.toLowerCase()] = k;
+      });
+
+      // 2. World GeoJSON
       let geoData;
       try {
         const res = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
         geoData = await res.json();
       } catch (e) {
-        countryCount.textContent = 'Map failed to load. Please check your connection.';
+        countryCount.textContent = 'Map failed to load.';
         return;
       }
 
-      // Name→key fallback for ISO codes that return -99 (e.g. France in this dataset)
-      const visitedByName = {};
-      Object.entries(visited).forEach(([k, v]) => {
-        visitedByName[v.name.toLowerCase()] = k;
-      });
+      // Annotate world features.
+      // Name-priority matching handles non-standard codes (e.g. user stores CH=China
+      // in Notion, but GeoJSON ISO standard has CH=Switzerland, CN=China).
+      // Known name equivalences cover dataset differences (Czechia vs Czech Republic, etc.)
+      const NAME_EQ = {
+        'czechia': 'czech republic',    'czech republic': 'czechia',
+        'united states of america': 'united states', 'united states': 'united states of america',
+      };
+      function namesMatch(geoName, visitedName) {
+        const g = geoName.toLowerCase(), v = visitedName.toLowerCase();
+        return g === v || g.includes(v) || v.includes(g) || NAME_EQ[g] === v || NAME_EQ[v] === g;
+      }
 
       geoData.features.forEach(feature => {
-        let code = feature.properties['ISO3166-1-Alpha-2'];
-        const name = feature.properties.name;
-        if (!visited[code] && name) {
-          const fallback = visitedByName[name.toLowerCase()];
-          if (fallback) code = fallback;
-        }
-        const d = coordsToPath(feature.geometry, W, H);
-        if (!d) return;
+        const alpha2 = feature.properties['ISO3166-1-Alpha-2'];
+        const alpha3 = feature.properties['ISO3166-1-Alpha-3'];
+        const fname  = feature.properties.name || '';
 
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', d);
-        path.setAttribute('class', 'country' + (visited[code] ? ' visited' : ''));
-        path.setAttribute('data-code', code);
-        path.setAttribute('data-name', name);
+        // 1. Name match takes highest priority (handles non-standard codes like CH=China)
+        let resolvedCode = visitedByName[fname.toLowerCase()];
 
-        if (visited[code]) {
-          path.addEventListener('mousemove', (e) => {
-            tooltip.textContent = visited[code].name;
-            tooltip.classList.add('visible');
-            tooltip.style.left = (e.clientX + 14) + 'px';
-            tooltip.style.top = (e.clientY - 8) + 'px';
-          });
-          path.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
-          path.addEventListener('click', () => {
-            const info = visited[code];
-            modalName.textContent = info.name;
-            modalFlag.textContent = info.flag;
-            modalNote.textContent = info.note;
-            modal.style.display = 'flex';
-          });
+        // 2. Alpha-2 code match — only if name is compatible (prevents CH=Switzerland
+        //    being matched to the user's CH=China visited entry)
+        if (!resolvedCode && visited[alpha2] && namesMatch(fname, visited[alpha2].name)) {
+          resolvedCode = alpha2;
         }
-        svg.appendChild(path);
+
+        // 3. Alpha-3 code match
+        if (!resolvedCode && alpha3 && visited[alpha3]) {
+          resolvedCode = alpha3;
+        }
+
+        feature._resolvedCode = resolvedCode || alpha2;
+        feature._isVisited    = !!resolvedCode;
+        worldFeatures.push(feature);
       });
 
-      // Country chips
-      const visitedList = Object.entries(visited).sort((a, b) => a[1].name.localeCompare(b[1].name));
-      countryCount.textContent = visitedList.length + ' countries visited';
+      // 3. Setup canvas & draw
+      setupCanvas();
+      attachEvents();
+      draw();
 
-      visitedList.forEach(([code, info]) => {
-        const chip = document.createElement('button');
-        chip.className = 'country-chip';
-        chip.textContent = info.flag + ' ' + info.name;
-        chip.addEventListener('click', () => {
-          modalName.textContent = info.name;
-          modalFlag.textContent = info.flag;
-          modalNote.textContent = info.note;
-          modal.style.display = 'flex';
+      // 5. Stats
+      const uniqueCount = Object.keys(visited).length;
+      countryCount.textContent = uniqueCount + ' countr' + (uniqueCount === 1 ? 'y' : 'ies') + ' visited';
+
+      // 6. Trip timeline (unchanged logic)
+      const sortedTrips = [...trips].reverse();
+      const groups = [];
+      sortedTrips.forEach(trip => {
+        const year = trip.enterDate ? trip.enterDate.slice(0, 4) : null;
+        const groupKey = year || 'undated';
+        if (!groups.length || groups[groups.length - 1].key !== groupKey) {
+          groups.push({ key: groupKey, label: year || '—', trips: [] });
+        }
+        groups[groups.length - 1].trips.push(trip);
+      });
+
+      groups.forEach(group => {
+        const details = document.createElement('details');
+        details.className = 'trip-group';
+
+        const uniqueInGroup = new Set(group.trips.map(t => t.code)).size;
+        const summary = document.createElement('summary');
+        summary.className = 'trip-year';
+        summary.innerHTML = `<span>${group.label}</span><span class="trip-year-count">${uniqueInGroup}</span>`;
+        details.appendChild(summary);
+
+        const body = document.createElement('div');
+        body.className = 'trip-group-body';
+
+        group.trips.forEach(trip => {
+          const row = document.createElement('button');
+          row.className = 'trip-row';
+          const enter = trip.enterFmt || '—';
+          const exit  = trip.exitFmt  || '—';
+          const isUS  = (trip.code === 'USA' || trip.code === 'US');
+          let subLine = '';
+          if (isUS) {
+            subLine = [trip.city, trip.region].filter(Boolean).join(', ');
+          } else if (trip.city) {
+            subLine = trip.city;
+          }
+          const nameBlock = `
+            ${subLine ? `<span class="trip-region">${subLine}</span>` : ''}
+            <span class="trip-name-main"><span class="trip-flag">${trip.flag}</span> ${trip.name}</span>
+          `;
+          row.innerHTML = `
+            <span class="trip-name">${nameBlock}</span>
+            <span class="trip-dates">${enter}${trip.exitFmt ? ' — ' + exit : ''}</span>
+          `;
+          row.addEventListener('click', () => openModal(trip));
+          body.appendChild(row);
         });
-        countryList.appendChild(chip);
+
+        details.appendChild(body);
+        countryList.appendChild(details);
       });
     }
 
-    loadMap();
+    // Resize handler (debounced)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { setupCanvas(); draw(); }, 150);
+    });
+
+    // Redraw on theme change (so colors update)
+    const themeObserver = new MutationObserver(() => draw());
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    loadGlobe();
+
   </script>
+  <script src="theme.js"></script>
+  <script src="view.js"></script>
 
 </body>
 </html>
