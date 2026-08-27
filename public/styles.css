@@ -215,155 +215,12 @@ a {
   display: none;
 }
 
-/* =====================
-   HOME PAGE — Table of Contents
-   ===================== */
-.home-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 5rem 2rem;
-  text-align: center;
-}
-
-/* Book title block */
-.home-book {
-  margin-bottom: 3rem;
-}
-
-/* Decorative rule above name */
-.home-rule {
-  width: 40px;
-  height: 1px;
-  background: var(--accent);
-  margin: 0 auto 1.5rem;
-  opacity: 0.6;
-}
-
-.home-name {
-  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-  font-weight: 300;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text);
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-}
-
-.home-edition {
-  font-size: 0.6rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.35rem;
-}
-
-.home-title {
-  font-size: 0.62rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-/* Thin ornamental divider */
-.home-ornament {
-  font-size: 0.7rem;
-  letter-spacing: 0.5em;
-  color: var(--border-2);
-  margin-bottom: 2.5rem;
-  user-select: none;
-}
-
 /* TOC Navigation — book contents list */
 .toc {
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
   text-align: left;
-}
-
-.toc-heading {
-  font-size: 0.55rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 1.1rem;
-  text-align: center;
-  opacity: 0.7;
-}
-
-.toc-item {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 0.8rem 0;
-  cursor: pointer;
-  transition: color 0.25s;
-  text-decoration: none;
-  color: var(--text);
-  border-bottom: 1px solid var(--border);
-}
-
-.toc-item:first-of-type {
-  border-top: 1px solid var(--border);
-}
-
-.toc-item:hover .toc-label {
-  color: var(--accent);
-}
-
-.toc-item:hover .toc-num {
-  color: var(--accent);
-  opacity: 1;
-}
-
-.toc-label {
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 400;
-  transition: color 0.25s;
-  color: var(--text);
-}
-
-.toc-dots {
-  flex: 1;
-  margin: 0 0.75rem;
-  overflow: hidden;
-  white-space: nowrap;
-  color: var(--border-2);
-  font-size: 0.55rem;
-  letter-spacing: 0.08em;
-  position: relative;
-  top: -1px;
-}
-
-.toc-dots::after {
-  content: '. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .';
-}
-
-.toc-num {
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  opacity: 0.65;
-  transition: color 0.25s, opacity 0.25s;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Home footer */
-.home-footer {
-  position: fixed;
-  bottom: 1.75rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.55rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  opacity: 0.4;
 }
 
 /* =====================
@@ -550,282 +407,6 @@ a {
 }
 
 /* =====================
-   INTERESTS PAGE
-   ===================== */
-.work-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.work-item {
-  display: block;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
-  transition: none;
-  cursor: pointer;
-}
-
-.work-item:first-child {
-  border-top: 1px solid var(--border);
-}
-
-.work-item-inner {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  gap: 2rem;
-  transition: transform 0.3s;
-}
-
-.work-item:hover .work-item-inner {
-  transform: translateX(0.4rem);
-}
-
-.work-item-meta {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 0.6rem;
-}
-
-.work-tag {
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.7;
-}
-
-.work-year {
-  font-size: 0.58rem;
-  letter-spacing: 0.15em;
-  color: var(--text-3);
-  font-variant-numeric: tabular-nums;
-}
-
-.work-title {
-  font-size: 1.15rem;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
-}
-
-.work-desc {
-  font-size: 0.85rem;
-  color: var(--text-2);
-  line-height: 1.65;
-  letter-spacing: 0.02em;
-}
-
-.work-arrow {
-  font-size: 0.9rem;
-  color: var(--accent);
-  opacity: 0;
-  transition: opacity 0.3s, transform 0.3s;
-  margin-top: 0.4rem;
-  flex-shrink: 0;
-}
-
-.work-item:hover .work-arrow {
-  opacity: 0.7;
-  transform: translateX(4px);
-}
-
-/* Project card (interests page) */
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3.5rem;
-}
-
-.project-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.project-image {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: block;
-  overflow: hidden;
-  border: 1px solid var(--border-2);
-  position: relative;
-  background: var(--bg-2);
-  transition: border-color 0.3s;
-}
-
-.project-card:hover .project-image {
-  border-color: var(--accent);
-}
-
-.project-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(20%);
-  transition: filter 0.4s, transform 0.4s;
-}
-
-.project-card:hover .project-image img {
-  filter: grayscale(0%);
-  transform: scale(1.02);
-}
-
-.project-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-2);
-  position: relative;
-  overflow: hidden;
-}
-
-.project-placeholder::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 40px,
-      var(--border) 40px,
-      var(--border) 41px
-    );
-}
-
-.project-placeholder-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  z-index: 1;
-  opacity: 0.5;
-}
-
-/* Race bib preview */
-.bib-preview {
-  border: 1.5px solid var(--border-2);
-  padding: 0.7rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 4.5rem;
-  min-height: 3rem;
-  position: relative;
-  background: var(--bg-2);
-}
-
-.bib-preview::before {
-  content: '';
-  position: absolute;
-  top: 0.35rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1rem;
-  height: 0.22rem;
-  border-radius: 0 0 3px 3px;
-  background: var(--border-2);
-}
-
-.bib-preview--sm {
-  min-width: 3rem;
-  min-height: 2.5rem;
-  padding: 0.5rem 0.7rem;
-  opacity: 0.55;
-}
-
-.bib-num {
-  font-size: 0.95rem;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
-
-.bib-preview--sm .bib-num {
-  font-size: 0.72rem;
-}
-
-.project-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 0.8rem;
-  gap: 1rem;
-}
-
-.project-name {
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.project-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-shrink: 0;
-}
-
-.project-tag {
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.project-link {
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  color: var(--text-3);
-  text-decoration: none;
-  transition: color 0.25s;
-}
-
-.project-card:hover .project-link {
-  color: var(--accent);
-}
-
-/* Films preview grid */
-.films-preview {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 2px;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  background: var(--bg);
-}
-
-.films-preview-poster {
-  overflow: hidden;
-  background: var(--bg-3);
-}
-
-.films-preview-poster img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.35s ease;
-}
-
-.project-card:hover .films-preview-poster img {
-  transform: scale(1.05);
-}
-
-/* =====================
    TRAVEL PAGE
    ===================== */
 .travel-intro {
@@ -901,11 +482,9 @@ a {
   /* Travel fills the viewport — page doesn't scroll; only the list does.
      JS sets the exact side height (= globe height); this caps it as a fallback. */
   .travel-main { height: 100vh; overflow: hidden; padding-bottom: 2rem; }
-  .countries-side { overflow-y: auto; padding-right: 0.4rem; max-height: calc(100vh - 11rem); }
-}
+  .countries-side { overflow-y: auto; padding-right: 0.4rem; max-height: calc(100vh - 11rem); }}
 @media (max-width: 760px) {
-  .countries-layout { grid-template-columns: 1fr; gap: 1.2rem; }
-}
+  .countries-layout { grid-template-columns: 1fr; gap: 1.2rem; }}
 
 .trip-row {
   display: grid;
@@ -1109,405 +688,6 @@ a {
   letter-spacing: 0.08em;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
-}
-
-/* =====================
-   RACES PAGE
-   ===================== */
-.pr-section {
-  margin-bottom: 3rem;
-}
-
-.pr-header {
-  font-size: 0.58rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 0.9rem;
-}
-
-.pr-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1px;
-  border: 1px solid var(--border-2);
-}
-
-.pr-cell {
-  padding: 1rem 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  border-right: 1px solid var(--border);
-  background: var(--bg-2);
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-a.pr-cell:hover {
-  background: var(--bg-3);
-  cursor: pointer;
-}
-
-a.pr-cell:hover .pr-time {
-  color: var(--accent-2);
-}
-
-.pr-cell:last-child {
-  border-right: none;
-}
-
-.pr-distance {
-  font-size: 0.55rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.pr-time {
-  font-size: 1.25rem;
-  font-weight: 200;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.pr-race {
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
-  color: var(--text-3);
-  margin-top: 0.1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.race-group {
-  margin-bottom: 2rem;
-}
-
-.race-group-summary {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  cursor: pointer;
-  list-style: none;
-  padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--border-2);
-  margin-bottom: 1.1rem;
-  user-select: none;
-}
-
-.race-group-summary::-webkit-details-marker { display: none; }
-
-.race-group-label {
-  font-size: 0.62rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.7;
-}
-
-.race-group-count {
-  font-size: 0.55rem;
-  letter-spacing: 0.15em;
-  color: var(--text-3);
-}
-
-.race-group[open] .race-group-summary .race-group-label {
-  opacity: 1;
-}
-
-.race-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 1.25rem;
-  margin-top: 0;
-}
-
-.bib-card {
-  position: relative;
-}
-
-.bib-card-inner {
-  border: 1px solid var(--border-2);
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-2);
-  position: relative;
-  transition: border-color 0.2s;
-  overflow: hidden;
-}
-
-.bib-card:hover .bib-card-inner {
-  border-color: var(--accent);
-}
-
-.bib-card-pin {
-  position: absolute;
-  top: 0.6rem;
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  border: 1px solid var(--border-2);
-  background: var(--bg);
-  z-index: 2;
-}
-
-.bib-card-pin--left  { left: 1rem; }
-.bib-card-pin--right { right: 1rem; }
-
-.bib-card-image {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: var(--bg);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bib-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  transition: transform 0.35s ease;
-}
-
-.bib-card:hover .bib-card-image img {
-  transform: scale(1.03);
-}
-
-.bib-card-image--empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-2);
-}
-
-.bib-card-distance-placeholder {
-  font-size: 2.2rem;
-  font-weight: 200;
-  letter-spacing: 0.06em;
-  color: var(--border-2);
-}
-
-.bib-card-info {
-  padding: 0.9rem 1.1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.bib-card-name {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text);
-  font-weight: 300;
-  line-height: 1.4;
-}
-
-.bib-card-date {
-  font-size: 0.56rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  opacity: 0.6;
-  font-variant-numeric: tabular-nums;
-  margin-top: 0.1rem;
-}
-
-.bib-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 0.5rem;
-  gap: 0.5rem;
-}
-
-.bib-card-time {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  font-weight: 300;
-}
-
-.bib-card-strava {
-  font-size: 0.56rem;
-  letter-spacing: 0.1em;
-  color: var(--text-3);
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-
-.bib-card-strava:hover {
-  color: var(--accent);
-}
-
-.bib-card-notes {
-  font-size: 0.68rem;
-  line-height: 1.65;
-  letter-spacing: 0.02em;
-  color: var(--text-2);
-  margin-top: 0.6rem;
-  font-weight: 300;
-}
-
-.yet-to-run {
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
-  color: var(--text-3);
-  font-weight: 300;
-  font-style: italic;
-  margin-top: 0.9rem;
-}
-
-/* Race Modal */
-.race-modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 8, 8, 0.82);
-  z-index: 500;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.race-modal-box {
-  background: var(--bg-2);
-  border: 1px solid var(--border-2);
-  max-width: 500px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.race-modal-close {
-  position: absolute;
-  top: 0.8rem;
-  right: 0.9rem;
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 1rem;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.2s;
-  font-family: inherit;
-  z-index: 2;
-}
-
-.race-modal-close:hover { opacity: 1; }
-
-.race-modal-map {
-  width: 100%;
-  height: 280px;
-  background: var(--bg);
-  overflow: hidden;
-}
-
-.race-modal-map iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-.race-modal-strava-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  width: 100%;
-  height: 100%;
-  text-decoration: none;
-  color: var(--accent);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.2s;
-}
-
-.race-modal-strava-banner:hover {
-  background: var(--bg-3);
-}
-
-.race-modal-body {
-  padding: 1.35rem 1.6rem 1.6rem;
-}
-
-.race-modal-meta {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  margin-bottom: 0.35rem;
-}
-
-.race-modal-distance {
-  font-size: 0.56rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.race-modal-date {
-  font-size: 0.56rem;
-  letter-spacing: 0.1em;
-  color: var(--text-3);
-  font-variant-numeric: tabular-nums;
-}
-
-.race-modal-name {
-  font-size: 1.1rem;
-  font-weight: 200;
-  letter-spacing: 0.07em;
-  color: var(--text);
-  margin-bottom: 0.65rem;
-}
-
-.race-modal-stats {
-  margin-bottom: 0.65rem;
-}
-
-.race-modal-time {
-  font-size: 1.5rem;
-  font-weight: 200;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.race-modal-notes {
-  font-size: 0.82rem;
-  line-height: 1.75;
-  color: var(--text-2);
-  font-weight: 300;
-  margin-bottom: 0.9rem;
-}
-
-.race-modal-strava-btn {
-  display: inline-block;
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-  text-decoration: none;
-  border: 1px solid var(--border-2);
-  padding: 0.45rem 0.9rem;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.race-modal-strava-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent-2);
 }
 
 /* =====================
@@ -2174,13 +1354,6 @@ a.pr-cell:hover .pr-time {
   color: var(--text);
   transition: color 0.2s;
 }
-.pf-tile-sub {
-  font-family: "Space Mono", monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
 .pf-tile:hover .pf-avatar,
 .pf-tile:focus-visible .pf-avatar { transform: translateY(-5px) scale(1.05); box-shadow: 0 0 24px var(--glow); }
 .pf-tile[data-profile="friend"]:hover .pf-avatar { box-shadow: 0 0 24px var(--glow-2); }
@@ -2260,8 +1433,7 @@ a.pr-cell:hover .pr-time {
   .pf-grid { gap: 1.6rem; }
   .pf-avatar { width: 78px; height: 78px; }
   .pf-avatar-letter { font-size: 2.1rem; }
-  .pf-circle-name { display: none; }
-}
+  .pf-circle-name { display: none; }}
 
 /* =====================
    HOME — Netflix-style browse (hero + card rows)
@@ -2382,16 +1554,6 @@ a.pr-cell:hover .pr-time {
 .card--soon:hover .card-cover { transform: none; box-shadow: none; border-color: var(--border-2); }
 .card--soon:hover .card-label { color: var(--text); }
 .card--soon .card-cover { border-color: var(--border-2); }
-
-/* Card-cover image/preview (Postcards & Polaroids tiles) */
-.card-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(18%);
-  transition: filter 0.3s;
-}
 .card:hover .card-thumb { filter: none; }
 .card-polaroid {
   width: 62px;
@@ -2424,8 +1586,7 @@ a.pr-cell:hover .pr-time {
   .hero { min-height: 46vh; padding-top: 6rem; }
   .card { width: 150px; }
   .card-cover { height: 128px; }
-  .card-glyph { font-size: 2.8rem; }
-}
+  .card-glyph { font-size: 2.8rem; }}
 
 /* Splash hint — sits lower, below the player tiles */
 .pf-splash-hint {
@@ -2433,72 +1594,6 @@ a.pr-cell:hover .pr-time {
   font-family: "Space Mono", monospace;
   font-size: 0.82rem;
   letter-spacing: 0.04em;
-  color: var(--text-3);
-}
-
-/* =====================
-   RÉSUMÉ PAGE — physical copy, click to download
-   ===================== */
-.resume-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 6rem 1.5rem 4rem;
-}
-.resume-frame {
-  position: relative;
-  display: block;
-  width: 100%;
-  max-width: 620px;
-  min-height: 180px;
-  background: var(--bg-2);
-  border: 3px solid var(--accent);
-  box-shadow: 8px 8px 0 var(--bg-3);
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, border-color 0.2s;
-}
-.resume-frame:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 10px 10px 0 var(--accent-2);
-  border-color: var(--accent-2);
-}
-.resume-frame img { display: block; width: 100%; height: auto; }
-.resume-placeholder {
-  display: none;
-  font-family: "Silkscreen", monospace;
-  font-size: 0.9rem;
-  line-height: 2;
-  color: var(--text-3);
-  text-align: center;
-  padding: 3.5rem 1rem;
-}
-.resume-placeholder small {
-  font-family: "Space Mono", monospace;
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.resume-frame--empty .resume-placeholder { display: block; }
-.resume-dl {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-family: "Silkscreen", monospace;
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.resume-frame:hover .resume-dl { opacity: 1; }
-.resume-hint {
-  margin-top: 1.4rem;
-  font-family: "Space Mono", monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
   color: var(--text-3);
 }
 
@@ -2552,8 +1647,7 @@ a.pr-cell:hover .pr-time {
 
 @media (max-width: 560px) {
   .status-row { flex-direction: column; gap: 0.25rem; }
-  .status-value { text-align: left; }
-}
+  .status-value { text-align: left; }}
 
 /* =====================
    PHASE 3 — inner-page pixel polish
@@ -2574,17 +1668,6 @@ a.pr-cell:hover .pr-time {
   box-shadow: 0 0 18px var(--glow);
 }
 .film-stars { color: var(--accent-2); }
-
-/* Races — bib cards + PR grid */
-.bib-card { transition: transform 0.15s; }
-.bib-card:hover { transform: translateY(-4px); }
-.bib-card-inner { border-width: 2px; transition: border-color 0.2s, box-shadow 0.2s; }
-.bib-card:hover .bib-card-inner { border-color: var(--accent); box-shadow: 0 0 18px var(--glow); }
-a.pr-cell { transition: border-color 0.2s, box-shadow 0.2s; }
-a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
-
-/* Race modal */
-.race-modal-box { border: 2px solid var(--accent); box-shadow: 0 0 44px var(--glow); }
 
 /* Thoughts */
 .thought-group-date { font-family: "Silkscreen", monospace; color: var(--accent-2); }
@@ -2705,12 +1788,6 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
-.race-map {
-  display: block;
-  border: 2px solid var(--border-2);
-  margin-bottom: 1.5rem;
-}
-.race-map img { display: block; width: 100%; height: auto; }
 .race-strava-wrap { text-align: center; }
 
 /* PR line is clickable → scrolls to that race below */
@@ -2753,11 +1830,8 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
 .race-col-info .race-detail-grid,
 .race-col-info .race-notes,
 .race-col-info .race-map { margin-bottom: 0; }
-.strava-embed-placeholder { width: 100%; }
-.strava-embed-placeholder iframe { width: 100% !important; border: 2px solid var(--border-2); }
 @media (max-width: 760px) {
-  .race-layout { grid-template-columns: 1fr; }
-}
+  .race-layout { grid-template-columns: 1fr; }}
 
 /* Bib popup */
 .bib-modal-overlay {
@@ -3000,13 +2074,6 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
   text-transform: uppercase;
   color: var(--text-3);
 }
-.pc-noframe-sub {
-  font-size: 0.55rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  opacity: 0.7;
-}
 
 /* Back overlays the front's box; image shown whole (contain, never cropped) */
 .pc-back {
@@ -3086,16 +2153,6 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
 /* The `hidden` attribute must win over class-level display rules
    (e.g. .pc-passin/.pc-viewbar/.pc-grid set display, which otherwise beats [hidden]). */
 [hidden] { display: none !important; }
-
-/* ── Deck ⇄ Grid toggle + grid filters (post-unlock) ── */
-.pc-viewbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin: 0 0 1.75rem;
-}
 .pc-modetoggle { display: inline-flex; border: 1px solid var(--border-2); }
 .pc-mode-btn {
   background: none; border: none; border-right: 1px solid var(--border-2);
@@ -3174,43 +2231,7 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
 }
 
 @media (max-width: 480px) {
-  .pc-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Interests-hub preview: a small stack of postcards */
-.pc-card-preview { background: var(--bg-2); }
-.pc-card-preview .pc-mini {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 46%;
-  aspect-ratio: 3 / 2;
-  background: var(--bg-3);
-  border: 1px solid var(--border-2);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.14);
-}
-.pc-card-preview .pc-mini--3 { transform: translate(-50%, -50%) rotate(-9deg); opacity: 0.5; }
-.pc-card-preview .pc-mini--2 { transform: translate(-50%, -50%) rotate(6deg);  opacity: 0.75; }
-.pc-card-preview .pc-mini--1 { transform: translate(-50%, -50%) rotate(-2deg); background: var(--bg); }
-.pc-card-preview .pc-mini-stamp {
-  position: absolute;
-  top: 12%;
-  right: 10%;
-  width: 20%;
-  height: 26%;
-  border: 1px solid var(--accent);
-  opacity: 0.7;
-}
-.pc-card-preview .pc-mini-lines {
-  position: absolute;
-  left: 10%;
-  bottom: 22%;
-  width: 45%;
-  height: 1px;
-  background: var(--border);
-  box-shadow: 0 6px 0 var(--border), 0 12px 0 var(--border);
-}
-.project-card:hover .pc-card-preview .pc-mini--1 { border-color: var(--accent); }
+  .pc-grid { grid-template-columns: repeat(2, 1fr); }}
 
 /* =====================
    POLAROIDS PAGE
@@ -3400,30 +2421,7 @@ a.pr-cell:hover { box-shadow: 0 0 14px var(--glow); }
 .pl-lightbox-close:hover { opacity: 1; }
 
 @media (max-width: 640px) {
-  .pl-toolbar { display: none; }
-}
-
-/* Interests-hub preview: a few scattered polaroids on a board */
-.pl-board-preview { background: var(--bg-2); }
-.pl-board-preview .pl-mini {
-  position: absolute;
-  width: 30%;
-  aspect-ratio: 3 / 4;
-  background: var(--pl-paper);
-  padding: 6% 6% 16%;
-  box-shadow: 0 5px 14px rgba(0,0,0,0.22);
-}
-.pl-board-preview .pl-mini::before {
-  content: '';
-  display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: var(--bg-3);
-}
-.pl-board-preview .pl-mini--a { top: 22%; left: 16%; transform: rotate(-8deg); }
-.pl-board-preview .pl-mini--b { top: 30%; left: 40%; transform: rotate(5deg); z-index: 2; }
-.pl-board-preview .pl-mini--c { top: 20%; left: 62%; transform: rotate(-3deg); }
-.project-card:hover .pl-board-preview .pl-mini--b::before { background: var(--accent); }
+  .pl-toolbar { display: none; }}
 
 /* =====================
    EMAIL POPUP (homepage "Email me")
