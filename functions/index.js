@@ -475,7 +475,7 @@ exports.postcards = onRequest({ secrets: [NOTION_TOKEN, NOTION_POSTCARDS_DB] }, 
 // we return the back images + From/To for each postcard that has a back. This is
 // what keeps the backs (and Victoria's mailing address on them) private: a visitor
 // without the passcode never receives the back image URLs at all.
-const POSTCARD_BACKS_PASSWORD = "iamvictoria"; // EDIT ME — the passcode you share with trusted people.
+const POSTCARD_BACKS_PASSWORD = "iambigtoe"; // EDIT ME — the passcode you share with trusted people.
 
 exports.postcardBacks = onRequest({ secrets: [NOTION_TOKEN, NOTION_POSTCARDS_DB] }, async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
@@ -573,7 +573,7 @@ const admin = require("firebase-admin");
 if (!admin.apps.length) admin.initializeApp();
 
 // EDIT ME — the editor passcode. Checked here on the server; change it anytime.
-const CURRENTLY_PASSWORD = "iamvictoria";
+const CURRENTLY_PASSWORD = "iambigtoe";
 
 exports.currently = onRequest({}, async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
@@ -626,7 +626,7 @@ exports.currently = onRequest({}, async (req, res) => {
 //        browser). With `board`, it saves the arrangement everyone sees; without, it
 //        just verifies the passcode (used to enter the on-page "curate" edit mode).
 // Positions are stored in Firestore (not Notion), mirroring the `currently` pattern.
-const POLAROID_BOARD_PASSWORD = "iamvictoria"; // EDIT ME — the curator passcode.
+const POLAROID_BOARD_PASSWORD = "iambigtoe"; // EDIT ME — the curator passcode.
 
 exports.polaroidBoard = onRequest({}, async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");

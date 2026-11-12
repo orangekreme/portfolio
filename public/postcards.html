@@ -93,7 +93,7 @@
   <div class="pc-pass-modal" id="pc-pass-modal" role="dialog" aria-modal="true" aria-label="Enter passcode">
     <div class="pc-pass-box">
       <button class="pc-pass-close" id="pc-pass-close" aria-label="Close">✕</button>
-      <p class="pc-pass-title">🔒 Enter passcode</p>
+      <p class="pc-pass-title">🔑 Insert Key</p>
       <form class="pc-pass-form" id="pc-pass-form">
         <input type="password" class="pc-pass-input" id="pc-pass-input" placeholder="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" />
         <button type="submit" class="pc-pass-ok">Unlock</button>
@@ -173,6 +173,7 @@
       FILTERS.forEach(f => {
         const count = allCards.filter(c => c.type === f.id).length;
         if (count === 0) return;
+        if (f.id === 'Sent' && !unlocked) return;   // Sent appears only after unlocking
         const btn = document.createElement('button');
         btn.className = 'pc-seg-btn' + (f.id === filter ? ' is-active' : '');
         btn.setAttribute('role', 'tab');
@@ -193,7 +194,7 @@
 
     // ── Rendering ─────────────────────────────────────────────────────────────
     function render() {
-      if (mode === 'grid' && unlocked) { deckView.hidden = true; gridEl.hidden = false; renderGrid(); }
+      if (mode === 'grid') { deckView.hidden = true; gridEl.hidden = false; renderGrid(); }
       else { gridEl.hidden = true; deckView.hidden = false; renderDeck(); }
     }
 
@@ -201,7 +202,7 @@
       const B = backs[card.id] || {};
       const frontInner = card.frontImage
         ? '<img src="' + esc(card.frontImage) + '" alt="' + esc(card.name || 'Postcard') + '" />'
-        : '<div class="pc-noframe"><span class="pc-noframe-label">Letter</span></div>';
+        : '<div class="pc-noframe"><span class="pc-noframe-label">' + (/letter/i.test(card.name || '') ? 'Letter' : 'No front') + '</span></div>';
       let back = '';
       if (canFlip) {
         back = '<div class="pc-face pc-back">' +
@@ -247,23 +248,20 @@
       );
     }
 
+    // Grid is a fronts-only overview — no flipping (backs are read in the Deck).
     function renderGrid() {
       const list = gridList();
       if (!list.length) { gridEl.innerHTML = '<p class="pc-status">No postcards match.</p>'; return; }
       gridEl.innerHTML = '';
       list.forEach(card => {
-        const canFlip = card.hasBack && card.type !== 'Collected';
+        const frontInner = card.frontImage
+          ? '<img src="' + esc(card.frontImage) + '" alt="' + esc(card.name || 'Postcard') + '" />'
+          : '<div class="pc-noframe"><span class="pc-noframe-label">' + (/letter/i.test(card.name || '') ? 'Letter' : 'No front') + '</span></div>';
         const tile = document.createElement('div');
         tile.className = 'pc-gtile';
         tile.innerHTML =
-          '<div class="pc-gtile-card' + (canFlip ? '' : ' is-noflip') + '">' +
-            '<div class="pc-gtile-inner">' + cardFaces(card, canFlip) + '</div>' +
-          '</div>' +
+          '<div class="pc-gtile-card">' + frontInner + '</div>' +
           '<div class="pc-gtile-cap">' + esc([card.location, monthYear(card.displayDate)].filter(Boolean).join(' · ')) + '</div>';
-        if (canFlip) {
-          const c = tile.querySelector('.pc-gtile-card');
-          c.addEventListener('click', () => c.classList.toggle('is-flipped'));
-        }
         gridEl.appendChild(tile);
       });
     }
@@ -358,7 +356,8 @@
       lockEl.classList.add('is-unlocked');
       lockEl.setAttribute('aria-label', 'Backs unlocked');
       closePass();
-      modetoggle.hidden = false;   // reveal the Deck/Grid toggle (stay in Deck)
+      buildFilters();                           // the Sent segment now appears
+      if (mode === 'grid') buildGridFilters();   // sender/recipient filter now populates
       // Preload the back images so the first flip doesn't flash.
       Object.keys(backs).forEach(function (id) { var b = backs[id]; if (b && b.backImage) { var im = new Image(); im.src = b.backImage; } });
       render();
@@ -388,7 +387,9 @@
         return;
       }
       lockEl.hidden = !allCards.some(c => c.hasBack && c.type !== 'Collected');
-      const firstType = FILTERS.find(f => allCards.some(c => c.type === f.id));
+      modetoggle.hidden = false;   // Deck/Grid toggle available from the start
+      // Default to the first visible segment (Sent stays hidden until unlocked).
+      const firstType = FILTERS.find(f => allCards.some(c => c.type === f.id) && (f.id !== 'Sent' || unlocked));
       setFilter(firstType ? firstType.id : 'Received');
     });
   </script>

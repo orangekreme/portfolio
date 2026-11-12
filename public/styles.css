@@ -2181,47 +2181,28 @@ a {
   gap: 1.5rem 1.25rem;
 }
 .pc-gtile { display: flex; flex-direction: column; gap: 0.5rem; }
+/* Grid tile — a fronts-only overview card (no flip; backs are read in the Deck) */
 .pc-gtile-card {
   position: relative;
   aspect-ratio: 3 / 2;
-  cursor: pointer;
-  perspective: 900px;
-}
-.pc-gtile-card.is-noflip { cursor: default; }
-.pc-gtile-inner {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transition: transform 0.55s cubic-bezier(0.4, 0.15, 0.2, 1);
-  will-change: transform;
-}
-.pc-gtile-card.is-flipped .pc-gtile-inner { transform: rotateY(180deg); }
-/* Reuse the deck face markup, but size faces to the tile (contain = no crop) */
-.pc-gtile-card .pc-front,
-.pc-gtile-card .pc-back {
-  position: absolute; inset: 0;
   border: 1px solid var(--border-2);
   background: var(--bg-2);
   box-shadow: 0 6px 16px rgba(0,0,0,0.18);
   overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.pc-gtile-card .pc-front img,
-.pc-gtile-card .pc-back-img {
+.pc-gtile-card img {
   width: 100%; height: 100%;
-  max-width: none; max-height: none;
   object-fit: contain;
-  border: none; box-shadow: none;
   display: block;
 }
 .pc-gtile-card .pc-noframe {
   width: 100%; height: 100%;
   aspect-ratio: auto;
   box-shadow: none;
-  gap: 0.25rem;
 }
-.pc-gtile-card .pc-noframe-sub { display: none; }
-.pc-gtile-card .pc-flip-hint { display: none; }
 .pc-gtile-cap {
   font-size: 0.56rem;
   letter-spacing: 0.05em;

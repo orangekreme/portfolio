@@ -22,7 +22,7 @@
   var GATES = {
     self: {
       question: "you know the password:",
-      answer: "iamvictoria"
+      answer: "iambigtoe"
     }
   };
 
@@ -198,7 +198,7 @@
     vaultModal.innerHTML =
       '<div class="pc-pass-box">' +
         '<button class="pc-pass-close" type="button" aria-label="Close">&#10005;</button>' +
-        '<p class="pc-pass-title">&#128273; Insert key</p>' +
+        '<p class="pc-pass-title">&#128273; Insert Key</p>' +
         '<form class="pc-pass-form">' +
           '<input type="password" class="pc-pass-input" placeholder="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" />' +
           '<button type="submit" class="pc-pass-ok">Enter</button>' +

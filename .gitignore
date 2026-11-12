@@ -67,3 +67,8 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+.DS_Store
+.claude/
+
+# Gated postcard backs contain home/recipient addresses — keep OUT of the public repo (served from Firebase only)
+public/img/postcards/back-*.jpg

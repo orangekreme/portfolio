@@ -1,0 +1,20 @@
+{
+  "board": {
+    "items": {
+      "pl1": { "onBoard": true, "x": 8,  "y": 14, "angle": -6, "z": 1 },
+      "pl2": { "onBoard": true, "x": 38, "y": 8,  "angle": 4,  "z": 2 },
+      "pl3": { "onBoard": true, "x": 64, "y": 20, "angle": -3, "z": 3 },
+      "pl4": { "onBoard": true, "x": 24, "y": 46, "angle": 7,  "z": 4 }
+    },
+    "stackOrder": ["pl5", "pl6", "pl7"]
+  },
+  "polaroids": [
+    { "id": "pl1", "name": "Golden hour, Big Sur", "image": "https://picsum.photos/seed/pl1/600/600", "date": "2025-09-12", "displayDate": "09/12/2025", "location": "Big Sur, CA" },
+    { "id": "pl2", "name": "Kyoto alley", "image": "https://picsum.photos/seed/pl2/600/600", "date": "2025-11-02", "displayDate": "11/02/2025", "location": "Kyoto, JP" },
+    { "id": "pl3", "name": "Rooftop", "image": "https://picsum.photos/seed/pl3/600/600", "date": "2026-01-20", "displayDate": "01/20/2026", "location": "New York, NY" },
+    { "id": "pl4", "name": "Beach day", "image": "https://picsum.photos/seed/pl4/600/600", "date": "2024-07-04", "displayDate": "07/04/2024", "location": "Lisbon, PT" },
+    { "id": "pl5", "name": "Trail run", "image": "https://picsum.photos/seed/pl5/600/600", "date": "2025-04-18", "displayDate": "04/18/2025", "location": "Marin, CA" },
+    { "id": "pl6", "name": "Cafe morning", "image": "https://picsum.photos/seed/pl6/600/600", "date": "2025-06-30", "displayDate": "06/30/2025", "location": "Paris, FR" },
+    { "id": "pl7", "name": "Snow", "image": "https://picsum.photos/seed/pl7/600/600", "date": "2026-02-14", "displayDate": "02/14/2026", "location": "Reykjavík, IS" }
+  ]
+}

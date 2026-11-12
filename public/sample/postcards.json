@@ -1,0 +1,219 @@
+{
+ "postcards": [
+  {
+   "id": "pc01",
+   "name": "Flying lizard — Xishuangbanna",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-01-front.jpg",
+   "location": "Xishuangbanna, China",
+   "displayDate": "03/29/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc02",
+   "name": "Yu Garden, Shanghai",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-02-front.jpg",
+   "location": "Shanghai, China",
+   "displayDate": "03/29/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc03",
+   "name": "Abstract painting",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-03-front.jpg",
+   "location": "Nanjing, China",
+   "displayDate": "03/19/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc04",
+   "name": "Red Fuji (Hokusai)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-04-front.jpg",
+   "location": "Tokyo, Japan",
+   "displayDate": "03/03/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc05",
+   "name": "Camels — Guelmim",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-05-front.jpg",
+   "location": "Guelmim, Morocco",
+   "displayDate": "",
+   "hasBack": true
+  },
+  {
+   "id": "pc06",
+   "name": "Fish linocut",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-06-front.jpg",
+   "location": "Chicago, IL",
+   "displayDate": "",
+   "hasBack": true
+  },
+  {
+   "id": "pc07",
+   "name": "Letter from Derex",
+   "type": "Received",
+   "frontImage": "",
+   "location": "",
+   "displayDate": "04/20/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc08",
+   "name": "Teddy bear",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-08-front.jpg",
+   "location": "Chicago, IL",
+   "displayDate": "",
+   "hasBack": true
+  },
+  {
+   "id": "pc09",
+   "name": "Valentine (anime)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-09-front.jpg",
+   "location": "NYC, NY",
+   "displayDate": "",
+   "hasBack": true
+  },
+  {
+   "id": "pc10",
+   "name": "Cats illustration",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-10-front.jpg",
+   "location": "Chicago, IL",
+   "displayDate": "12/30/2024",
+   "hasBack": true
+  },
+  {
+   "id": "pc11",
+   "name": "Pigeon statue",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-11-front.jpg",
+   "location": "NYC, NY",
+   "displayDate": "06/17/2025",
+   "hasBack": true
+  },
+  {
+   "id": "pc12",
+   "name": "New York City",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-12-front.jpg",
+   "location": "NYC, NY",
+   "displayDate": "06/02/2025",
+   "hasBack": true
+  },
+  {
+   "id": "pc13",
+   "name": "Morton Arboretum",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-13-front.jpg",
+   "location": "Chicago, IL",
+   "displayDate": "",
+   "hasBack": true
+  },
+  {
+   "id": "pc14",
+   "name": "Lakeside landscape",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-14-front.jpg",
+   "location": "Berlin, Germany",
+   "displayDate": "10/06/2025",
+   "hasBack": true
+  },
+  {
+   "id": "pc15",
+   "name": "For Victoria",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-15-front.jpg",
+   "location": "NYC, NY",
+   "displayDate": "11/01/2025",
+   "hasBack": true
+  },
+  {
+   "id": "pc16",
+   "name": "Singapore — Marina Bay",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-16-front.jpg",
+   "location": "Singapore",
+   "displayDate": "06/10/2025",
+   "hasBack": true
+  },
+  {
+   "id": "pc17",
+   "name": "Washington DC (Lincoln Memorial)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-17-front.jpg",
+   "location": "Washington, DC",
+   "hasBack": true
+  },
+  {
+   "id": "pc18",
+   "name": "Woods Hole (Titanic)",
+   "type": "Received",
+   "frontImage": "",
+   "location": "Massachusetts",
+   "displayDate": "09/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se01",
+   "name": "Au Cheval, NYC",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-01-front.jpg",
+   "location": "New York, NY",
+   "displayDate": "06/18/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se02",
+   "name": "Mammoth Cave",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-02-front.jpg",
+   "location": "Mammoth Cave, KY",
+   "displayDate": "07/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se03",
+   "name": "Smoky Mountains (bear)",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-03-front.jpg",
+   "location": "Great Smoky Mountains",
+   "displayDate": "07/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se04",
+   "name": "Mammoth Cave 1941",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-04-front.jpg",
+   "location": "Mammoth Cave, KY",
+   "displayDate": "07/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se05",
+   "name": "Starry Skies — Mammoth Cave",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-05-front.jpg",
+   "location": "Mammoth Cave, KY",
+   "displayDate": "07/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "se06",
+   "name": "World's Longest Cave",
+   "type": "Sent",
+   "frontImage": "/img/postcards/sent-06-front.jpg",
+   "location": "Mammoth Cave, KY",
+   "displayDate": "07/01/2026",
+   "hasBack": true
+  }
+ ]
+}
