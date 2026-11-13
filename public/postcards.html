@@ -308,11 +308,8 @@
       if (!B.backImage) return;
       backModalImg.src = B.backImage;
       backModalImg.alt = (card.name || 'Postcard') + ' back';
-      const w = who(card);
-      const capParts = [
-        w ? (card.type === 'Sent' ? 'To ' : 'From ') + w : '',
-        card.location, monthYear(card.displayDate)
-      ].filter(Boolean);
+      // Caption stays minimal — just location · date (who it's from is on the back image itself).
+      const capParts = [card.location, monthYear(card.displayDate)].filter(Boolean);
       backCapEl.textContent = capParts.join('  ·  ');
       backCapEl.hidden = !capParts.length;
       backModal.classList.add('is-open');

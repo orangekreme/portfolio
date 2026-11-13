@@ -83,10 +83,6 @@
             </header>
             <hr class="post-divider" />
             <div class="post-body substack-body">${data.body}</div>
-            ${data.substackUrl ? `
-            <div class="post-substack-link">
-              <a href="${data.substackUrl}" target="_blank" rel="noopener">Read on Substack ↗</a>
-            </div>` : ''}
           `;
         })
         .catch(() => {

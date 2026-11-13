@@ -66,33 +66,28 @@ function formatDate(isoString) {
 }
 
 async function fetchSubstackPosts() {
+  // Substack's /api/v1/posts now returns { posts: [...] } and REJECTS the `offset`
+  // query param ("Invalid value"), so the old offset-pagination loop broke and
+  // returned nothing. We request a single page with a high (but under-cap) limit;
+  // `limit=50` returns the whole archive today. Revisit if posts exceed ~40.
   const posts = [];
-  const limit = 50;
-  let offset = 0;
+  const raw = await httpsGet(
+    `https://orangekreme.substack.com/api/v1/posts?limit=50`
+  );
+  const parsed = JSON.parse(raw);
+  const page = Array.isArray(parsed) ? parsed : (parsed.posts || []);
 
-  // Paginate through all posts
-  while (true) {
-    const raw = await httpsGet(
-      `https://orangekreme.substack.com/api/v1/posts?limit=${limit}&offset=${offset}`
-    );
-    const page = JSON.parse(raw);
-    if (!Array.isArray(page) || page.length === 0) break;
+  for (const p of page) {
+    const title = (p.title || "").trim();
+    const slug  = (p.slug  || "").trim();
+    if (!title || !slug) continue;
 
-    for (const p of page) {
-      const title = (p.title || "").trim();
-      const slug  = (p.slug  || "").trim();
-      if (!title || !slug) continue;
+    const { monthYear, displayDate, dateStr } = formatDate(p.post_date);
+    const guid    = p.canonical_url || `https://orangekreme.substack.com/p/${slug}`;
+    const excerpt = (p.subtitle || p.description || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+    const body    = p.body_html || "";   // present on list endpoint for public posts
 
-      const { monthYear, displayDate, dateStr } = formatDate(p.post_date);
-      const guid    = p.canonical_url || `https://orangekreme.substack.com/p/${slug}`;
-      const excerpt = (p.subtitle || p.description || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-      const body    = p.body_html || "";   // present on list endpoint for public posts
-
-      posts.push({ title, slug, guid, dateStr, monthYear, displayDate, excerpt, body });
-    }
-
-    if (page.length < limit) break;
-    offset += limit;
+    posts.push({ title, slug, guid, dateStr, monthYear, displayDate, excerpt, body });
   }
 
   return posts;
