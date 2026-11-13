@@ -206,6 +206,22 @@
    "hasBack": true
   },
   {
+   "id": "pc24",
+   "name": "Singapore (Marina Bay Sands)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-24-front.jpg",
+   "location": "Singapore",
+   "displayDate": "06/10/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc25",
+   "name": "Tour de Coffee get-well card",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-25-front.jpg",
+   "hasBack": true
+  },
+  {
    "id": "se01",
    "name": "Au Cheval, NYC",
    "type": "Sent",
@@ -258,6 +274,95 @@
    "location": "Mammoth Cave, KY",
    "displayDate": "07/01/2026",
    "hasBack": true
+  },
+  {
+   "id": "co01",
+   "name": "Shinn West (sushi chef)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-01-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co02",
+   "name": "Parla (geometric)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-02-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co03",
+   "name": "Gramercy Tavern",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-03-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co04",
+   "name": "Levain Bakery (NYC map)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-04-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co05",
+   "name": "Cafebrería El Péndulo",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-05-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co06",
+   "name": "all & sundry (holiday party)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-06-front.jpg",
+   "hasBack": false,
+   "location": "New York, NY"
+  },
+  {
+   "id": "co07",
+   "name": "Believe in the Run",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-07-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co08",
+   "name": "Thai Diner",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-08-front.jpg",
+   "hasBack": false,
+   "location": "New York, NY"
+  },
+  {
+   "id": "co09",
+   "name": "Potluck Club (Chinatown)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-09-front.jpg",
+   "hasBack": false,
+   "location": "New York, NY"
+  },
+  {
+   "id": "co10",
+   "name": "Au Cheval — The Bar",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-10-front.jpg",
+   "hasBack": false,
+   "location": "New York, NY"
+  },
+  {
+   "id": "co11",
+   "name": "Autumn run (fall road)",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-11-front.jpg",
+   "hasBack": false
+  },
+  {
+   "id": "co12",
+   "name": "Greetings from New York City",
+   "type": "Collected",
+   "frontImage": "/img/postcards/collected-12-front.jpg",
+   "hasBack": false,
+   "location": "New York, NY"
   }
  ]
 }
