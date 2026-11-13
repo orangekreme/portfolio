@@ -102,6 +102,15 @@
     </div>
   </div>
 
+  <!-- Postcard back popup (grid view, once unlocked) -->
+  <div class="pc-back-modal" id="pc-back-modal" role="dialog" aria-modal="true" aria-label="Postcard back">
+    <div class="pc-back-box">
+      <button class="pc-back-close" id="pc-back-close" aria-label="Close">✕</button>
+      <img class="pc-back-modal-img" id="pc-back-modal-img" src="" alt="Postcard back" />
+      <div class="pc-back-cap" id="pc-back-cap" hidden></div>
+    </div>
+  </div>
+
   <script>
     function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':s; return d.innerHTML; }
     // Dates display as month + year only, e.g. "03/29/2026" → "Mar 2026".
@@ -248,7 +257,12 @@
       );
     }
 
-    // Grid is a fronts-only overview — no flipping (backs are read in the Deck).
+    // Grid shows fronts; once unlocked, a card with a back is clickable and
+    // opens that back as a popup over the grid.
+    function canFlipCard(card) {
+      const B = backs[card.id] || {};
+      return unlocked && card.hasBack && card.type !== 'Collected' && !!B.backImage;
+    }
     function renderGrid() {
       const list = gridList();
       if (!list.length) { gridEl.innerHTML = '<p class="pc-status">No postcards match.</p>'; return; }
@@ -269,6 +283,12 @@
             (/letter/i.test(card.name || '') ? 'Letter' : 'No front') + '</span></div>';
         }
 
+        if (canFlipCard(card)) {
+          box.classList.add('is-flippable');
+          box.insertAdjacentHTML('beforeend', '<span class="pc-gtile-flip">flip ⟲</span>');
+          box.addEventListener('click', () => openBack(card));
+        }
+
         const cap = document.createElement('div');
         cap.className = 'pc-gtile-cap';
         cap.textContent = [card.location, monthYear(card.displayDate)].filter(Boolean).join(' · ');
@@ -278,6 +298,33 @@
         gridEl.appendChild(tile);
       });
     }
+
+    // ── Back popup (grid) ────────────────────────────────────────────────────────
+    const backModal   = document.getElementById('pc-back-modal');
+    const backModalImg = document.getElementById('pc-back-modal-img');
+    const backCapEl   = document.getElementById('pc-back-cap');
+    function openBack(card) {
+      const B = backs[card.id] || {};
+      if (!B.backImage) return;
+      backModalImg.src = B.backImage;
+      backModalImg.alt = (card.name || 'Postcard') + ' back';
+      const w = who(card);
+      const capParts = [
+        w ? (card.type === 'Sent' ? 'To ' : 'From ') + w : '',
+        card.location, monthYear(card.displayDate)
+      ].filter(Boolean);
+      backCapEl.textContent = capParts.join('  ·  ');
+      backCapEl.hidden = !capParts.length;
+      backModal.classList.add('is-open');
+      document.body.classList.add('pf-no-scroll');
+    }
+    function closeBack() {
+      backModal.classList.remove('is-open');
+      backModalImg.src = '';
+      document.body.classList.remove('pf-no-scroll');
+    }
+    document.getElementById('pc-back-close').addEventListener('click', closeBack);
+    backModal.addEventListener('click', e => { if (e.target === backModal) closeBack(); });
 
     // ── Grid filters (sender/recipient + date) ──────────────────────────────────
     function buildGridFilters() {
@@ -378,7 +425,7 @@
 
     // ── Keyboard: ← → navigate (deck), space flips (deck, once unlocked) ─────────
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closePass(); return; }
+      if (e.key === 'Escape') { closePass(); closeBack(); return; }
       const typing = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
       if (typing || mode !== 'deck') return;
       if (e.key === 'ArrowLeft') go(-1);

@@ -2209,6 +2209,82 @@ a {
   line-height: 1.4;
 }
 
+/* Clickable grid tile (unlocked, has a back) — subtle flip affordance. */
+.pc-gtile-card.is-flippable { cursor: pointer; position: relative; }
+.pc-gtile-card.is-flippable img { transition: filter 0.15s ease; }
+.pc-gtile-card.is-flippable:hover img { filter: brightness(0.82); }
+.pc-gtile-flip {
+  position: absolute;
+  bottom: 0.4rem; right: 0.4rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(8, 9, 16, 0.6);
+  padding: 0.15rem 0.35rem;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+.pc-gtile-card.is-flippable:hover .pc-gtile-flip { opacity: 1; }
+
+/* Postcard back popup (grid view) */
+.pc-back-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(8, 9, 16, 0.85);
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.pc-back-modal.is-open { display: flex; }
+.pc-back-box {
+  position: relative;
+  max-width: 680px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pc-back-modal-img {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.pc-back-close {
+  position: absolute;
+  top: -0.6rem; right: -0.6rem;
+  width: 2rem; height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(8, 9, 16, 0.9);
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+  z-index: 1;
+}
+.pc-back-close:hover { background: var(--accent); border-color: var(--accent); }
+.pc-back-cap {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.82);
+  text-align: center;
+}
+@media (max-width: 480px) {
+  .pc-back-close { top: -0.4rem; right: -0.4rem; }
+}
+
 @media (max-width: 480px) {
   .pc-grid { grid-template-columns: repeat(2, 1fr); }}
 
