@@ -156,9 +156,53 @@
    "id": "pc18",
    "name": "Woods Hole (Titanic)",
    "type": "Received",
-   "frontImage": "",
+   "frontImage": "/img/postcards/postcard-18-front.jpg",
    "location": "Massachusetts",
    "displayDate": "09/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc19",
+   "name": "Iceland (aurora)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-19-front.jpg",
+   "location": "Iceland",
+   "hasBack": true
+  },
+  {
+   "id": "pc20",
+   "name": "Hawai'i (Nēnē goose)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-20-front.jpg",
+   "location": "Hawaii",
+   "displayDate": "08/29/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc21",
+   "name": "Tahoma (Washington)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-21-front.jpg",
+   "location": "Washington",
+   "displayDate": "09/01/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc22",
+   "name": "Mount Pleasant, SC",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-22-front.jpg",
+   "location": "South Carolina",
+   "displayDate": "10/20/2026",
+   "hasBack": true
+  },
+  {
+   "id": "pc23",
+   "name": "Brooks (Indy)",
+   "type": "Received",
+   "frontImage": "/img/postcards/postcard-23-front.jpg",
+   "location": "Indianapolis, IN",
+   "displayDate": "11/07/2026",
    "hasBack": true
   },
   {
