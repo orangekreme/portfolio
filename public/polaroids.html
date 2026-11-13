@@ -60,11 +60,14 @@
 
     <!-- Toolbar -->
     <div class="pl-toolbar" id="pl-toolbar">
-      <button class="pl-btn" id="pl-organize">▚ Organize</button>
+      <div class="pl-viewtoggle" id="pl-viewtoggle">
+        <button class="pl-mode-btn is-active" id="pl-view-board" type="button">Board</button>
+        <button class="pl-mode-btn" id="pl-view-grid" type="button">Grid</button>
+      </div>
       <div class="pl-toolbar-right">
-        <span class="pl-dirty" id="pl-dirty" hidden>unsaved changes</span>
-        <button class="pl-btn" id="pl-save" hidden>▶ Save layout</button>
-        <button class="pl-btn pl-btn--ghost" id="pl-curate">Curate</button>
+        <span class="pl-save-status" id="pl-save-status" aria-live="polite"></span>
+        <button class="pl-btn" id="pl-organize">▚ Organize</button>
+        <button class="pl-btn pl-btn--ghost" id="pl-clear">✕ Clear board</button>
       </div>
     </div>
 
@@ -121,18 +124,17 @@
     const statusEl  = document.getElementById('pl-status');
     const counterEl = document.getElementById('pl-counter');
     const stackHint = document.getElementById('pl-stack-hint');
-    const dirtyEl   = document.getElementById('pl-dirty');
-    const saveBtn   = document.getElementById('pl-save');
-    const curateBtn = document.getElementById('pl-curate');
     const organizeBtn = document.getElementById('pl-organize');
+    const clearBtn  = document.getElementById('pl-clear');
+    const saveStatusEl = document.getElementById('pl-save-status');
 
     let PL = [];              // [{id,image,name,date,displayDate,location}]
     let BY = {};             // id -> polaroid
     let B  = {};             // id -> {onBoard,x,y,angle,z}
     let STACK = [];          // ids in pile order (top first)
-    let editMode = false;
-    let editPass = null;
-    let dirty = false;
+    let boardPass = null;     // password for saving the shared board (captured from the view gate)
+    let viewMode = 'board';   // 'board' | 'grid' (desktop); mobile is always grid
+    let saveTimer = null;
 
     const isMobile = () => window.innerWidth > 0 && window.innerWidth <= 640;
 
@@ -199,7 +201,11 @@
     // ── Render ────────────────────────────────────────────────────────────────
     function render() {
       statusEl.hidden = true;
-      if (isMobile()) { renderGrid(); return; }
+      // Organize / Clear only apply to the board (desktop, board view).
+      const boardView = !isMobile() && viewMode === 'board';
+      if (organizeBtn) organizeBtn.style.display = boardView ? '' : 'none';
+      if (clearBtn) clearBtn.style.display = boardView ? '' : 'none';
+      if (isMobile() || viewMode === 'grid') { renderGrid(); return; }
       gridEl.hidden = true;
       boardEl.style.display = '';
       stackWrap.style.display = '';
@@ -220,7 +226,7 @@
         attachDrag(el, p.id, 'board');
         boardEl.appendChild(el);
       });
-      boardEl.classList.toggle('is-editing', editMode);
+      boardEl.classList.toggle('is-editing', !!boardPass);
     }
 
     function renderStack() {
@@ -368,7 +374,10 @@
     const lightboxInner = document.getElementById('pl-lightbox-inner');
     function openLightbox(p) {
       if (!p) return;
-      lightboxInner.innerHTML = '<div class="pl-polaroid pl-lightbox-card">' + polaroidHTML(p) + '</div>';
+      const cap = [p.location, p.displayDate].filter(Boolean).join('  ·  ');
+      lightboxInner.innerHTML =
+        '<div class="pl-lightbox-card"><img src="' + esc(p.image) + '" alt="' + esc(p.name || 'Polaroid') + '" /></div>' +
+        '<div class="pl-lb-meta">' + esc(cap) + '</div>';
       lightbox.classList.add('is-open');
       document.body.classList.add('pf-no-scroll');
     }
@@ -377,53 +386,55 @@
     lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-    // ── Edit mode + save ────────────────────────────────────────────────────────
-    function markDirty() { if (editMode) { dirty = true; dirtyEl.hidden = false; } }
-    function setEditMode(on) {
-      editMode = on;
-      saveBtn.hidden = !on;
-      curateBtn.textContent = on ? 'Done' : 'Curate';
-      curateBtn.classList.toggle('pl-btn--ghost', !on);
-      document.body.classList.toggle('pl-edit', on);
-      render();
+    // ── Auto-save — the board arrangement persists for everyone, on every change ──
+    function saveStatus(s) {
+      saveStatusEl.textContent = s === 'saving' ? 'saving…' : s === 'saved' ? 'saved ✓' : s === 'error' ? "couldn't save" : '';
+      saveStatusEl.classList.toggle('is-error', s === 'error');
     }
-    curateBtn.addEventListener('click', async () => {
-      if (editMode) { setEditMode(false); return; }
-      const pass = window.prompt('Curator passcode:');
-      if (!pass) return;
-      try {
-        const r = await fetch('/api/polaroid-board', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: pass })
-        });
-        if (!r.ok) throw new Error('bad');
-        editPass = pass;
-        setEditMode(true);
-      } catch (e) {
-        if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { editPass = pass; setEditMode(true); } // dev bypass
-        else alert('Wrong passcode.');
-      }
-    });
-    saveBtn.addEventListener('click', async () => {
+    function markDirty() { scheduleSave(); }
+    function scheduleSave() {
+      if (!boardPass) return;
+      clearTimeout(saveTimer);
+      saveStatus('saving');
+      saveTimer = setTimeout(saveBoard, 600);
+    }
+    async function saveBoard() {
+      if (!boardPass) return;
       const items = {};
       Object.keys(B).forEach(id => {
         const s = B[id];
-        items[id] = { onBoard: !!s.onBoard, x: +s.x.toFixed(2), y: +s.y.toFixed(2), angle: +s.angle || 0, z: s.z || 0 };
+        items[id] = { onBoard: !!s.onBoard, x: +(+s.x).toFixed(2), y: +(+s.y).toFixed(2), angle: +s.angle || 0, z: s.z || 0 };
       });
-      const payload = { password: editPass, board: { items, stackOrder: STACK.slice() } };
-      saveBtn.textContent = 'Saving…';
       try {
         const r = await fetch('/api/polaroid-board', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: boardPass, board: { items, stackOrder: STACK.slice() } })
         });
         if (!r.ok) throw new Error('bad');
-        dirty = false; dirtyEl.hidden = true;
+        saveStatus('saved');
       } catch (e) {
-        if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) alert('Could not save.');
-        else { dirty = false; dirtyEl.hidden = true; } // dev: pretend-save
+        if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) saveStatus('saved'); // dev: pretend-save
+        else saveStatus('error');
       }
-      saveBtn.textContent = '▶ Save layout';
+    }
+
+    // ── Clear the board — all photos go back to the pile (only when clicked) ──────
+    clearBtn.addEventListener('click', () => {
+      Object.keys(B).forEach(id => { B[id].onBoard = false; B[id].z = 0; });
+      STACK = PL.map(p => p.id).filter(id => B[id]);   // everything back into the pile
+      markDirty();
+      render();
     });
+
+    // ── Board / Grid view toggle (switching never changes the board) ──────────────
+    function setView(m) {
+      viewMode = m;
+      document.getElementById('pl-view-board').classList.toggle('is-active', m === 'board');
+      document.getElementById('pl-view-grid').classList.toggle('is-active', m === 'grid');
+      render();
+    }
+    document.getElementById('pl-view-board').addEventListener('click', () => setView('board'));
+    document.getElementById('pl-view-grid').addEventListener('click', () => setView('grid'));
 
     window.addEventListener('resize', () => { render(); });
 
@@ -452,6 +463,8 @@
         if ((input.value || '').trim().toLowerCase() === PASS) {
           gate.classList.remove('is-open');
           document.body.classList.remove('pf-no-scroll');
+          boardPass = PASS;                          // same passcode saves the board
+          document.body.classList.add('pl-edit');    // board is draggable + auto-saves
           if (!booted) { booted = true; initBoard(); }
         } else {
           msg.textContent = 'Wrong — try again';

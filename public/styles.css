@@ -2381,18 +2381,69 @@ a {
   width: 100%;
   overflow: hidden;
   background: transparent;
+  position: relative;
 }
 .pl-photo img { width: 100%; height: auto; display: block; }
+/* Location · date — hidden until you hover the photo. */
 .pl-cap {
-  margin-top: 6px;
-  font-size: 0.52rem;
-  letter-spacing: 0.06em;
-  color: var(--pl-ink);
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(10,10,14,0.64);
+  color: #fff;
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
   text-align: center;
+  padding: 4px 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
 }
+.pl-cap:empty { display: none; }
+.pl-polaroid:hover .pl-cap { opacity: 1; }
+
+/* Board / Grid view toggle */
+.pl-viewtoggle { display: inline-flex; border: 1px solid var(--border-2); }
+.pl-mode-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.pl-mode-btn.is-active { background: var(--accent); color: var(--bg); }
+.pl-save-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.pl-save-status.is-error { color: #c0392b; }
+
+/* Lightbox: photo + always-visible location/date below */
+.pl-lightbox-inner { display: flex; flex-direction: column; align-items: center; }
+.pl-lightbox-card img {
+  max-width: min(86vw, 520px);
+  max-height: 72vh;
+  width: auto; height: auto;
+  display: block;
+  box-shadow: 0 14px 44px rgba(0,0,0,0.5);
+}
+.pl-lb-meta {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.pl-lb-meta:empty { display: none; }
 
 /* On the board — absolutely placed, tilted, draggable */
 .pl-on-board {
@@ -2480,7 +2531,7 @@ a {
   padding: 2rem;
 }
 .pl-lightbox.is-open { display: flex; }
-.pl-lightbox-card { width: min(360px, 80vw); cursor: default; }
+.pl-lightbox-card { width: auto; cursor: default; line-height: 0; }
 .pl-lightbox-close {
   position: absolute;
   top: 1.2rem; right: 1.4rem;
