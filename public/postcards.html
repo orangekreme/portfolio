@@ -254,14 +254,33 @@
       if (!list.length) { gridEl.innerHTML = '<p class="pc-status">No postcards match.</p>'; return; }
       gridEl.innerHTML = '';
       list.forEach(card => {
-        const frontInner = card.frontImage
-          ? '<img src="' + esc(card.frontImage) + '" alt="' + esc(card.name || 'Postcard') + '" />'
-          : '<div class="pc-noframe"><span class="pc-noframe-label">' + (/letter/i.test(card.name || '') ? 'Letter' : 'No front') + '</span></div>';
         const tile = document.createElement('div');
         tile.className = 'pc-gtile';
-        tile.innerHTML =
-          '<div class="pc-gtile-card">' + frontInner + '</div>' +
-          '<div class="pc-gtile-cap">' + esc([card.location, monthYear(card.displayDate)].filter(Boolean).join(' · ')) + '</div>';
+
+        const box = document.createElement('div');
+        box.className = 'pc-gtile-card';
+        if (card.frontImage) {
+          const img = new Image();
+          img.alt = card.name || 'Postcard';
+          // Rotate portrait postcards 90° so every grid tile reads landscape.
+          const orient = () => {
+            if (img.naturalWidth && img.naturalHeight > img.naturalWidth) box.classList.add('is-rot');
+          };
+          img.addEventListener('load', orient);
+          img.src = card.frontImage;
+          if (img.complete) orient();
+          box.appendChild(img);
+        } else {
+          box.innerHTML = '<div class="pc-noframe"><span class="pc-noframe-label">' +
+            (/letter/i.test(card.name || '') ? 'Letter' : 'No front') + '</span></div>';
+        }
+
+        const cap = document.createElement('div');
+        cap.className = 'pc-gtile-cap';
+        cap.textContent = [card.location, monthYear(card.displayDate)].filter(Boolean).join(' · ');
+
+        tile.appendChild(box);
+        tile.appendChild(cap);
         gridEl.appendChild(tile);
       });
     }

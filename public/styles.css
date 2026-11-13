@@ -2198,6 +2198,15 @@ a {
   object-fit: contain;
   display: block;
 }
+/* Portrait cards are rotated 90° to read landscape like the rest of the grid.
+   Pre-rotation box is sized H×W (swapped) so it lands filling the 3:2 tile. */
+.pc-gtile-card.is-rot img {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 66.667%;   /* tile height, as % of tile width (3:2) */
+  height: 150%;     /* tile width,  as % of tile height     */
+  transform: translate(-50%, -50%) rotate(90deg);
+}
 .pc-gtile-card .pc-noframe {
   width: 100%; height: 100%;
   aspect-ratio: auto;
