@@ -1,3 +1,6 @@
+// NOTE: @notionhq/client is pinned to v2 in package.json — v5 removed
+// databases.query(), which every endpoint below relies on. Do not bump to v5
+// without migrating to dataSources.query({ data_source_id }).
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const { Client } = require("@notionhq/client");
