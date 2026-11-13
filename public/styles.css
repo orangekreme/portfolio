@@ -1962,7 +1962,16 @@ a {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-2);
+  margin-bottom: 0.5rem;
+}
+.pc-pass-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text-2);
+  opacity: 0.8;
   margin-bottom: 1rem;
+  line-height: 1.4;
 }
 .pc-pass-form { display: flex; gap: 0.5rem; }
 .pc-pass-input {

@@ -94,6 +94,23 @@
     <div class="pl-lightbox-inner" id="pl-lightbox-inner"></div>
   </div>
 
+  <!-- View gate — the polaroids stay hidden until the passcode is entered -->
+  <style>
+    .pl-gate { background: var(--bg); }           /* opaque — hides the board behind it */
+    #pf-insert-key { display: none !important; }  /* this page has its own lock */
+  </style>
+  <div class="pc-pass-modal is-open pl-gate" id="pl-gate" role="dialog" aria-modal="true" aria-label="Enter passcode">
+    <div class="pc-pass-box">
+      <p class="pc-pass-title">🔑 Insert Key</p>
+      <p class="pc-pass-hint">sorry this is just for me</p>
+      <form class="pc-pass-form" id="pl-gate-form">
+        <input type="password" class="pc-pass-input" id="pl-gate-input" placeholder="Passcode" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <button type="submit" class="pc-pass-ok">Enter</button>
+      </form>
+      <p class="pc-pass-msg" id="pl-gate-msg"></p>
+    </div>
+  </div>
+
   <script>
     function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':s; return d.innerHTML; }
     function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
@@ -411,14 +428,37 @@
 
     window.addEventListener('resize', () => { render(); });
 
-    // ── Boot ──────────────────────────────────────────────────────────────────
-    (async function init() {
+    // ── Boot (runs only after the view gate is unlocked) ────────────────────────
+    async function initBoard() {
       const [{ polaroids, board: sampleBoard }, savedBoard] = await Promise.all([loadPolaroids(), loadBoard()]);
       PL = polaroids;
       BY = {}; PL.forEach(p => { BY[p.id] = p; });
       if (!PL.length) { statusEl.textContent = 'No photos yet.'; return; }
       applyArrangement(savedBoard || sampleBoard);
       render();
+    }
+
+    // View gate — polaroids are private; reveal only after the passcode.
+    (function setupGate() {
+      const gate  = document.getElementById('pl-gate');
+      const form  = document.getElementById('pl-gate-form');
+      const input = document.getElementById('pl-gate-input');
+      const msg   = document.getElementById('pl-gate-msg');
+      const PASS  = 'iambigtoe';
+      let booted  = false;
+      document.body.classList.add('pf-no-scroll');
+      setTimeout(() => input.focus(), 50);
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if ((input.value || '').trim().toLowerCase() === PASS) {
+          gate.classList.remove('is-open');
+          document.body.classList.remove('pf-no-scroll');
+          if (!booted) { booted = true; initBoard(); }
+        } else {
+          msg.textContent = 'Wrong — try again';
+          input.select();
+        }
+      });
     })();
   </script>
   <script src="theme.js"></script>
