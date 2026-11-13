@@ -2175,42 +2175,31 @@ a {
 .pc-fsel:focus { outline: none; border-color: var(--accent); }
 
 /* ── Grid of postcards (flip in place) ── */
+/* Masonry columns so portrait + landscape cards pack with no empty boxes. */
 .pc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1.5rem 1.25rem;
+  column-width: 170px;
+  column-gap: 1.25rem;
 }
-.pc-gtile { display: flex; flex-direction: column; gap: 0.5rem; }
-/* Grid tile — a fronts-only overview card (no flip; backs are read in the Deck) */
-.pc-gtile-card {
-  position: relative;
-  aspect-ratio: 3 / 2;
-  border: 1px solid var(--border-2);
-  background: var(--bg-2);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-  overflow: hidden;
+.pc-gtile {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.4rem;
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+/* Grid tile — just the postcard: its own edge is the border, no frame. */
+.pc-gtile-card {
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  line-height: 0;
 }
 .pc-gtile-card img {
-  width: 100%; height: 100%;
-  object-fit: contain;
+  width: 100%; height: auto;
   display: block;
 }
-/* Portrait cards are rotated 90° to read landscape like the rest of the grid.
-   Pre-rotation box is sized H×W (swapped) so it lands filling the 3:2 tile. */
-.pc-gtile-card.is-rot img {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 66.667%;   /* tile height, as % of tile width (3:2) */
-  height: 150%;     /* tile width,  as % of tile height     */
-  transform: translate(-50%, -50%) rotate(90deg);
-}
 .pc-gtile-card .pc-noframe {
-  width: 100%; height: 100%;
-  aspect-ratio: auto;
-  box-shadow: none;
+  aspect-ratio: 3 / 2;
+  line-height: 1.3;
 }
 .pc-gtile-cap {
   font-size: 0.56rem;

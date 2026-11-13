@@ -262,13 +262,7 @@
         if (card.frontImage) {
           const img = new Image();
           img.alt = card.name || 'Postcard';
-          // Rotate portrait postcards 90° so every grid tile reads landscape.
-          const orient = () => {
-            if (img.naturalWidth && img.naturalHeight > img.naturalWidth) box.classList.add('is-rot');
-          };
-          img.addEventListener('load', orient);
           img.src = card.frontImage;
-          if (img.complete) orient();
           box.appendChild(img);
         } else {
           box.innerHTML = '<div class="pc-noframe"><span class="pc-noframe-label">' +
