@@ -23,7 +23,7 @@
     self: {
       question: "you know the password:",
       hint: "password is my favorite food",
-      answer: "friedchicken"
+      answer: "friedchicken!"
     }
   };
 

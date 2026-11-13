@@ -1973,6 +1973,14 @@ a {
   margin-bottom: 1rem;
   line-height: 1.4;
 }
+.pc-pass-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1.1rem;
+  line-height: 1.4;
+}
 .pc-pass-form { display: flex; gap: 0.5rem; }
 .pc-pass-input {
   flex: 1 1 auto;
@@ -2364,20 +2372,19 @@ a {
 /* Polaroid frame */
 .pl-polaroid {
   width: var(--pl-w);
-  background: var(--pl-paper);
-  padding: 8px 8px 24px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.22);
   user-select: none;
 }
+/* The real white Instax frame is already in each photo — show it uncropped,
+   with no extra site frame around it. */
 .pl-photo {
   width: 100%;
-  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #ccc;
+  background: transparent;
 }
-.pl-photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(8%); }
+.pl-photo img { width: 100%; height: auto; display: block; }
 .pl-cap {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.52rem;
   letter-spacing: 0.06em;
   color: var(--pl-ink);
